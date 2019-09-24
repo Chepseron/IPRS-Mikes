@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      >
+
+    <f:view contentType="text/html">
+        <h:head>
+            <f:facet name="first">
+                <link href="css/main_style.css" rel="stylesheet" type="text/css" />
+                <link href="css/global.css" rel="stylesheet" type="text/css" />
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>.::IPRS::.</title>
+            </f:facet>
+            <script type="text/javascript">
+                PrimeFaces.locales['tr'] = {
+                    closeText: 'kapat',
+                    prevText: 'geri',
+                    nextText: 'ileri',
+                    currentText: 'bugün',
+                    monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                    monthNamesShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
+                        'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
+                    dayNames: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
+                    dayNamesShort: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
+                    dayNamesMin: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
+                    weekHeader: 'Hf',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    month: 'Ay',
+                    week: 'Hafta',
+                    day: 'Gün',
+                    allDayText: 'Tüm Gün'
+                };
+            </script>
+            <style type="text/css">
+                .value {
+                    width: 1600px;
+
+                }
+            </style>
+
+            <script type="text/javascript">
+                //<![CDATA[
+                function handleMessage(data) {
+                    var series = [],
+                            chart = PF('browserChart').plot;
+
+                    for (var key in data) {
+                        series.push([key, data[key]]);
+                    }
+
+                    chart.series[0].data = series;
+                    chart.replot();
+                }
+                //]]> 
+            </script>
+
+
+
+        </h:head>
+
+        <h:body>
+
+            <p:layout fullPage="true">
+                <p:layoutUnit position="north" size="60" resizable="true" closable="true" collapsible="true">
+                    <div id="navi_bar">
+                        <div class="logo"><img src="images/GTB-Logo.jpg"  width="100px" height="50px" alt=" "/></div>
+                        <div class="navi_bar_container">
+
+                            <div id="navi">
+                                <h:form>
+                                    <ul>
+
+                                        <li><a href="homePage.xhtml">Home</a></li>
+                                        <li><a href="iprs.xhtml">iprs</a>  </li>
+                                        <li><a href="iprs.xhtml">Summary page</a></li>
+                                        <li><a href="calculator.xhtml">Calculator</a></li>
+                                        <li><a href="calendar.xhtml">Calendar</a></li>
+                                        <li><a href="help.xhtml">Need Help?</a></li>
+
+                                        <li><a href="help.xhtml"><h:commandButton  action="#{iprs.logout}" image="/images/system-logout.png" style="height: 20px; width: 20px" value="logout" title="logout"/></a></li>
+                                    </ul>
+                                </h:form>
+                            </div>
+                        </div>
+                    </div>
+                </p:layoutUnit>
+
+                <p:layoutUnit position="south" size="50" closable="true" collapsible="true">
+                    <div class="footer_content">
+                        <div class="footer_inside" style="float: right;">Copyright ©taajmoneytransfer All rights reserved.</div>
+                    </div>`
+                </p:layoutUnit>
+
+                <p:layoutUnit position="west" size="200"  header="SETTINGS"   style="border: 0 ; overflow: hidden; font-size: x-small" collapsible="true">
+                         <ui:include src="menu.xhtml" /> 
+                    <fieldset>
+                        <legend><font color="green">contact us</font></legend>
+                        <b>taajmoneytransfer, Westlands, Skypark towers</b>
+                        P.O.Box ***** - 01 NAIROBI
+                        Mobile:+254-72********
+                        Mobile:+254-72********
+                        Mobile:+254-72********
+                        Email:info@gtbank.com
+                    </fieldset>
+                </p:layoutUnit>
+                <p:layoutUnit position="east" size="200"  header="SETTINGS" style="border: 0 ; overflow: hidden; font-size: x-small" collapsible="true">
+                        <ui:include src="menu.xhtml" /> 
+                    <fieldset>
+                        <legend><font color="green">contact us</font></legend>
+                        <b>taajmoneytransfer, Westlands, Skypark towers</b>
+                        P.O.Box ***** - 01 NAIROBI
+                        Mobile:+254-72********
+                        Mobile:+254-72********
+                        Mobile:+254-72********
+                        Email:info@gtbank.com
+                    </fieldset>
+                </p:layoutUnit>
+
+
+
+
+                <p:layoutUnit position="center"  style="border: 0; overflow: hidden; font-size: x-small">
+                    <iframe width="100%" height="100%" src="http://www.calculator-1.com/outdoor/" scrolling="no" frameborder="0"></iframe>
+                </p:layoutUnit>
+            </p:layout>
+
+        </h:body>
+
+    </f:view>
+</html>
+
