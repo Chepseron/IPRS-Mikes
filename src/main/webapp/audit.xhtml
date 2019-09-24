@@ -37,7 +37,7 @@
             <p:layout fullPage="true">
                 <p:layoutUnit position="north" size="60" resizable="true" closable="true" collapsible="true">
                     <div id="navi_bar">
-                        <div class="logo"><img src="images/GTB-Logo.jpg"  width="100px" height="50px" alt=" "/></div>
+                        <div class="logo"><img src="images/GTB-Logo.jpg"  width="50px" height="50px" alt=" "/></div>
                         <div class="navi_bar_container">
 
                             <div id="navi">
@@ -72,7 +72,7 @@
                         Mobile:+254-72********
                         Mobile:+254-72********
                         Mobile:+254-72********
-                        Email:info@gtbank.com
+                        Email:info@taajmoneytransfer.com
                     </fieldset>
                 </p:layoutUnit>
 
@@ -85,7 +85,7 @@
                         Mobile:+254-72********
                         Mobile:+254-72********
                         Mobile:+254-72********
-                        Email:info@gtbank.com
+                        Email:info@taajmoneytransfer.com
                     </fieldset> 
                 </p:layoutUnit>
                 <p:layoutUnit position="center"  style="border: 0; overflow: hidden; font-size: x-small">
@@ -100,8 +100,8 @@
                                             <div>
                                                 <div>
                                                     <h:panelGrid columns="4">
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Cards that have been assiged to accounts" value="#{iprs.unassignedMeter}"/>
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Unassigned iprs" value="#{iprs.assignedMeter}"/>
+                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Queried ID numbers" value="#{iprs.unassignedMeter}"/>
+                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Trafic" value="#{iprs.assignedMeter}"/>
                                                         <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Logged On users" value="#{iprs.unassignedMeter}"/>
                                                         <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFx00, FF0000" title="Logged On users" value="#{iprs.assignedMeter}"/>
                                                     </h:panelGrid>
