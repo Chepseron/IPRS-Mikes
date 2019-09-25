@@ -107,24 +107,21 @@
                                                     </h:panelGrid>
                                                 </div>
                                                 <div>
-                                                    <p:dataTable var="iprss" value="#{iprs.cardList}" widgetVar="iprsTable"
+                                                    <p:dataTable var="iprss" value="#{iprs.iprsList}" widgetVar="iprsTable"
                                                                  paginator="true" rows="10"
                                                                  style="background: transparent; font-size: x-small"
                                                                  id="iprssTable"  
                                                                  emptyMessage="No iprs found with given criteria">
-                                                        <p:column  filterBy="#{iprss.customername}" sortBy="#{iprss.customername}" headerText="Owner">
-                                                            <p:outputLabel style="#{iprss.assigned == '1' ? 'color: Orange' : null}; #{iprss.assigned == '0' ? 'color: Red' : null};"  value="#{iprss.customername}" />
+                                                        <p:column  filterBy="#{iprss.firstName}" sortBy="#{iprss.firstName}" headerText="firstName">
+                                                            <p:outputLabel style="#{iprss.firstName == '1' ? 'color: Orange' : null}; #{iprss.firstName == '0' ? 'color: Red' : null};"  value="#{iprss.firstName}" />
                                                         </p:column>
-                                                        <p:column  headerText="Product name" sortBy="#{iprss.productname}"   id="studNumberColumn" filterBy="#{iprss.productname}">
-                                                            <p:outputLabel  style="#{iprss.assigned == '1' ? 'color: Orange' : null}; #{iprss.assigned == '0' ? 'color: Red' : null};"  value="#{iprss.productname}" />
+                                                        <p:column  headerText="second name" sortBy="#{iprss.secondName}"   id="studNumberColumn" filterBy="#{iprss.secondName}">
+                                                            <p:outputLabel  style="#{iprss.secondName == '1' ? 'color: Orange' : null}; #{iprss.assigned == '0' ? 'color: Red' : null};"  value="#{iprss.secondName}" />
                                                         </p:column>
-
-
-                                                        <p:column  filterBy="#{iprss.cardnumber}" sortBy="#{iprss.cardnumber}" headerText="card number">
-                                                            <p:outputLabel  style="#{iprss.assigned == '1' ? 'color: Orange' : null}; #{iprss.assigned == '0' ? 'color: Red' : null};"  value="#{iprss.cardnumber}" />
+                                                        <p:column  filterBy="#{iprss.lastName}" sortBy="#{iprss.lastName}" headerText="lastName">
+                                                            <p:outputLabel  style="#{iprss.lastName == '1' ? 'color: Orange' : null}; #{iprss.lastName == '0' ? 'color: Red' : null};"  value="#{iprss.lastName}" />
                                                         </p:column>
-
-                                                        <p:column  filterBy="#{iprss.assigned}" sortBy="#{iprss.assigned}" headerText="STATUS">
+                                                        <p:column  filterBy="#{iprss.status}" sortBy="#{iprss.status}" headerText="STATUS">
                                                             <h:graphicImage value="/images/blinkingButton.gif" rendered="#{iprss.assigned == '0'}" title="#{iprss.cardnumber} belongs to #{iprss.acctnumber} for #{iprss.customername} "  width="10px" height="10px"/>
                                                             <h:graphicImage value="/images/orangeflashing.png" rendered="#{iprss.assigned == '1'}"  title="#{iprss.cardnumber} belongs to #{iprss.acctnumber} for #{iprss.customername} " width="10px" height="10px"/>
                                                         </p:column>
@@ -152,45 +149,14 @@
                                                     </h:panelGrid>
                                                 </div>
                                                 <div>
-                                                    <p:dataTable var="iprss3" value="#{iprs.visaCardsList}" widgetVar="iprsTable"
-                                                                 paginator="true" rows="10"
-                                                                 style="background: transparent; font-size: x-small"
-                                                                 id="iprssTable3"  
-                                                                 emptyMessage="No iprs found with given criteria">
-                                                        <p:column  filterBy="#{iprss3.customername}" sortBy="#{iprss3.customername}" headerText="Owner">
-                                                            <p:outputLabel style="#{iprss3.assigned == '1' ? 'color: Orange' : null}; #{iprss3.assigned == '0' ? 'color: Red' : null};"  value="#{iprss3.customername}" />
-                                                        </p:column>
-                                                        <p:column  headerText="Product Name" sortBy="#{iprss3.productname}"   id="studNumberColumn" filterBy="#{iprss3.productname}">
-                                                            <p:outputLabel  style="#{iprss3.assigned == '1' ? 'color: Orange' : null}; #{iprss3.assigned == '0' ? 'color: Red' : null};"  value="#{iprss3.productname}" />
-                                                        </p:column>
-
-
-                                                        <p:column  filterBy="#{iprss3.cardnumber}" sortBy="#{iprss3.cardnumber}" headerText="card number">
-                                                            <p:outputLabel  style="#{iprss3.assigned == '1' ? 'color: Orange' : null}; #{iprss3.assigned == '0' ? 'color: Red' : null};"  value="#{iprss3.cardnumber}" />
-                                                        </p:column>
-
-                                                        <p:column  filterBy="#{iprss3.assigned}" sortBy="#{iprss3.assigned}" headerText="STATUS">
-                                                            <h:graphicImage value="/images/blinkingButton.gif" rendered="#{iprss3.assigned == '0'}" title="#{iprss3.cardnumber} belongs to #{iprss3.acctnumber} for #{iprss3.customername} "  width="10px" height="10px"/>
-                                                            <h:graphicImage value="/images/orangeflashing.png" rendered="#{iprss3.assigned == '1'}"  title="#{iprss3.cardnumber} belongs to #{iprss3.acctnumber} for #{iprss3.customername} " width="10px" height="10px"/>
-                                                        </p:column>
-                                                        <p:column >
-                                                            <p:commandLink   styleClass="si-icon-16x16 si-icon-send" update=":profilefrm:iprsDetail"  style="display: block; color:green" oncomplete="PF('iprsDialog').show()"  value="!details!"   title="VIEW  #{iprss3.customername}">                                                  
-                                                                <f:setPropertyActionListener value="#{iprss3}"   target="#{iprs.iprs}" />  
-                                                            </p:commandLink>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <p:commandLink  styleClass="si-icon-16x16 si-icon-send"   update=":profilefrm:iprsDetail" oncomplete="PF('iprsDialog').show()"  style="display: block; color:green"  value="!assign to account!" title="ASSIGN  #{iprss3.cardnumber}'s to an account"> 
-                                                                <f:setPropertyActionListener value="#{iprss3}"  target="#{iprs.iprs}" />  
-                                                            </p:commandLink>
-                                                        </p:column>
-                                                    </p:dataTable>
+                                                  
                                                 </div>
                                             </div>
                                         </p:tab>
                                     </p:tabView>
 
 
-                                    <p:dialog header="CARD DETAILS" dynamic="true" widgetVar="iprsDialog"  showEffect="clip"  hideEffect="explode" resizable="false">
+                                    <p:dialog header="IPRS DETAILS" dynamic="true" widgetVar="iprsDialog"  showEffect="clip"  hideEffect="explode" resizable="false">
                                         <p:outputPanel id="iprsDetail" style="text-align:center;">
                                             <div  style="#{iprs.iprs.assigned == '1' ? 'background-image: url(/images/blinkingButton.gif)' : null}" />
                                             <p:outputLabel value="#{iprs.iprs.cardnumber}"  style="color:RED; font-size: xx-large"/>

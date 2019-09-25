@@ -1,25 +1,14 @@
 package bean;
 
-import db.Accounts;
 import db.Admins;
 import db.Audittrails;
-import db.Cards;
-import db.Corebankingtable;
 import db.Emp;
+import db.Iprs;
 import db.Quotes;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
@@ -31,14 +20,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpSession;
 import javax.transaction.UserTransaction;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleModel;
-import org.primefaces.model.UploadedFile;
 import org.primefaces.model.chart.MeterGaugeChartModel;
 
 @ManagedBean(name = "iprs")
@@ -56,14 +42,11 @@ public class iprs {
     private Audittrails audit = new Audittrails();
     private List<Audittrails> auditList = new ArrayList();
     private String[] selectedResponsibilities = new String[30];
-    private Accounts Accounts = new Accounts();
-    private List<Accounts> AccountsList = new ArrayList();
     private HtmlDataTable htmlDataTable = new HtmlDataTable();
-    private List<Cards> cardList = new ArrayList();
     private Emp emp = new Emp();
     private List<Emp> EmpList = new ArrayList();
-    private Cards Cards = new Cards();
-    private List<Cards> unAssignedcardList = new ArrayList();
+    private Iprs iprs = new Iprs();
+    private List<Iprs> iprsList = new ArrayList();
     private Admins admins = new Admins();
     private List<Admins> adminsList = new ArrayList();
 
@@ -71,13 +54,8 @@ public class iprs {
     private List<Groups> GroupsList = new ArrayList();
 
     private List<Admins> adminsListBlank = new ArrayList();
-    private List<Cards> visaCardsList = new ArrayList();
     private List<Groups> groupsListBlank = new ArrayList();
 
-    private Corebankingtable Corebankingtable = new Corebankingtable();
-    private List<Corebankingtable> CorebankingtableList = new ArrayList();
-
-    private List<Cards> emptyCardList = new ArrayList();
     private List<Quotes> quotesList = new ArrayList();
     private ScheduleModel eventModel;
     private ScheduleModel lazyEventModel;
@@ -139,84 +117,10 @@ public class iprs {
         }
     }
 
-    private static final File LOCATION = new File("C:/uploads");
+ 
 
-    public void handleFileUpload(FileUploadEvent event) {
-        if (event.getFile() != null) {
-            try {
-                String prefix = FilenameUtils.getBaseName(event.getFile().getFileName());
-                String suffix = FilenameUtils.getExtension(event.getFile().getFileName());
-                File save = File.createTempFile(prefix + "-", "." + suffix, LOCATION);
-                Files.write(save.toPath(), event.getFile().getContents());
+ 
 
-                Path path = save.toPath();
-                System.out.println("the path is +++++++++++++++=" + path.getFileName());
-                utx.begin();
-                em.createNativeQuery("LOAD DATA LOCAL INFILE 'C:/uploads/" + path.getFileName() + "' INTO TABLE  Emp FIELDS TERMINATED BY '|' LINES TERMINATED BY '\\n'").executeUpdate();
-                utx.commit();
-
-                FacesMessage message = new FacesMessage("Succesful", event.getFile().getFileName() + " is uploaded.");
-                FacesContext.getCurrentInstance().addMessage(null, message);
-                // Add success message here.
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                Logger.getLogger(iprs.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-    }
-
-    private UploadedFile file;
-
-    public UploadedFile getFile() {
-        return file;
-    }
-
-    public void setFile(UploadedFile file) {
-        this.file = file;
-    }
-
-    public void upload(FileUploadEvent event) {
-
-        if (getFile() != null) {
-            try {
-
-                File targetFolder = new File(getFile().getFileName());
-
-                if (!targetFolder.exists()) {
-                    targetFolder.mkdirs();
-                }
-                try {
-                    InputStream inputStream = getFile().getInputstream();
-                    OutputStream out = new FileOutputStream(new File(targetFolder, getFile().getFileName()));
-                    int read = 0;
-                    byte[] bytes = new byte[1024];
-                    while ((read = inputStream.read(bytes)) != -1) {
-                        out.write(bytes, 0, read);
-                    }
-                    inputStream.close();
-                    out.flush();
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                getUtx().begin();
-                getEm().createNativeQuery("LOAD DATA LOCAL INFILE '" + targetFolder.getCanonicalPath() + "\\" + getFile() + "' INTO TABLE  Emp FIELDS TERMINATED BY '|' LINES TERMINATED BY '\\n'").executeUpdate();
-                getUtx().commit();
-
-                System.out.println(getFile());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage());
-                FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage("loginInfoMessages", message);
-            }
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "SUCCESS", "successful upload");
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage("loginInfoMessages", message);
-        }
-    }
 
     private void createMeterGaugeModels() {
         setUnassignedMeter(assigned());
@@ -578,297 +482,7 @@ public class iprs {
         return "empTransactions.xhtml";
     }
 
-    public String deleteEmpTransactions() {
-        try {
-            if (StringUtils.isEmpty(getUsername())) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
-                FacesContext context = FacesContext.getCurrentInstance();
-                return "homePage.xhtml";
-            }
-            getUtx().begin();
-
-            getAudit().setAction("deleted the EMP transactions table");
-            getAudit().setUsername(getUsername());
-            getAudit().setDateperformed(new Date());
-            getEm().persist(getAudit());
-            getEm().createNativeQuery("truncate emp").executeUpdate();
-            getUtx().commit();
-
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "SUCCESS", "Transactions deleted");
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage("loginInfoMessages", message);
-        } catch (Exception ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage());
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage("loginInfoMessages", message);
-            ex.printStackTrace();
-            return "empTransactions.xhtml";
-        }
-        return null;
-    }
-
-    public String generateCoreBankingFile() {
-        deleteCoreBanking();
-        int count = 0;
-        int count2 = 0;
-        try {
-
-            setEmpList((List<Emp>) getEm().createQuery("SELECT e FROM Emp e").getResultList());
-            for (Emp em2 : getEmpList()) {
-
-                setAccountsList((List<Accounts>) getEm().createQuery("SELECT a FROM Accounts a WHERE a.cardsID.cardnumber LIKE '" + em2.getPan() + "%'").getResultList());
-                for (Accounts acct : getAccountsList()) {
-
-                    if (em2.getOriginalMessageType().equalsIgnoreCase("05   ") && em2.getAmountIndicator().equals("DB")) {
-
-                        if (acct.getLedgerCode() == 5772) {
-                            System.out.println("Ledger code " + acct.getLedgerCode() + " card number " + em2.getPan() + " amount indicator " + em2.getAmountIndicator() + " origin message type " + em2.getOriginalMessageType());
-                            if (StringUtils.isEmpty(getUsername())) {
-                                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
-                                FacesContext context = FacesContext.getCurrentInstance();
-                                return "homePage.xhtml";
-                            }
-                            getUtx().begin();
-
-                            getCorebankingtable().setBatchcode("700");
-                            getCorebankingtable().setBatchcode2("700");
-                            getCorebankingtable().setBrcode(String.valueOf(acct.getBrcode()));
-                            getCorebankingtable().setCurrency(String.valueOf(acct.getCurrency()));
-                            getCorebankingtable().setCustomernumber(String.valueOf(acct.getCustomercode()));
-                            getCorebankingtable().setLedgercode(String.valueOf(acct.getLedgerCode()));
-                            getCorebankingtable().setNarration(em2.getTerminalLocation());
-                            getCorebankingtable().setSubacccode(String.valueOf(acct.getSubacctcode()));
-                            getCorebankingtable().setTrantype("1");
-                            getCorebankingtable().setAmount(em2.getBillingAmount() / 100);
-                            getAudit().setAction("Generated a DR in the core banking table");
-                            getAudit().setUsername(getUsername());
-                            getAudit().setDateperformed(new Date());
-                            getEm().persist(getAudit());
-                            getEm().persist(getCorebankingtable());
-                            getUtx().commit();
-                        }
-
-                    }
-
-                    if (em2.getOriginalMessageType().equalsIgnoreCase("RLDV ") && em2.getAmountIndicator().equals("CR")) {
-
-                        if (acct.getLedgerCode() == 5773) {
-                            if (StringUtils.isEmpty(getUsername())) {
-                                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
-                                FacesContext context = FacesContext.getCurrentInstance();
-                                return "homePage.xhtml";
-                            }
-                            getUtx().begin();
-
-                            getCorebankingtable().setBatchcode("700");
-                            getCorebankingtable().setBatchcode2("700");
-                            getCorebankingtable().setBrcode(String.valueOf(acct.getBrcode()));
-                            getCorebankingtable().setCurrency(String.valueOf(acct.getCurrency()));
-                            getCorebankingtable().setCustomernumber(String.valueOf(acct.getCustomercode()));
-                            getCorebankingtable().setLedgercode(String.valueOf(acct.getLedgerCode()));
-                            getCorebankingtable().setNarration(em2.getTerminalLocation());
-                            getCorebankingtable().setSubacccode(String.valueOf(acct.getSubacctcode()));
-                            getCorebankingtable().setTrantype("2");
-                            getCorebankingtable().setAmount(em2.getBillingAmount() / 100);
-                            getAudit().setAction("Generated a DR in the core banking table");
-                            getAudit().setUsername(getUsername());
-                            getAudit().setDateperformed(new Date());
-                            getEm().persist(getAudit());
-                            getEm().persist(getCorebankingtable());
-                            getUtx().commit();
-                        }
-
-                        if (acct.getLedgerCode() == 5772) {
-                            if (StringUtils.isEmpty(getUsername())) {
-                                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
-                                FacesContext context = FacesContext.getCurrentInstance();
-                                return "homePage.xhtml";
-                            }
-                            getUtx().begin();
-                            getCorebankingtable().setBatchcode("700");
-                            getCorebankingtable().setBatchcode2("700");
-                            getCorebankingtable().setBrcode(String.valueOf(acct.getBrcode()));
-                            getCorebankingtable().setCurrency(String.valueOf(acct.getCurrency()));
-                            getCorebankingtable().setCustomernumber(String.valueOf(acct.getCustomercode()));
-                            getCorebankingtable().setLedgercode(String.valueOf(acct.getLedgerCode()));
-                            getCorebankingtable().setNarration(em2.getTerminalLocation());
-                            getCorebankingtable().setSubacccode(String.valueOf(acct.getSubacctcode()));
-                            getCorebankingtable().setTrantype("1");
-                            getCorebankingtable().setAmount(em2.getBillingAmount() / 100);
-                            getAudit().setAction("Generated a DR in the core banking table");
-                            getAudit().setUsername(getUsername());
-                            getAudit().setDateperformed(new Date());
-                            getEm().persist(getAudit());
-                            getEm().persist(getCorebankingtable());
-                            getUtx().commit();
-                        }
-
-                    }
-
-                    if (em2.getOriginalMessageType().equalsIgnoreCase("RLOD ") && em2.getAmountIndicator().equals("DB")) {
-                        if (acct.getLedgerCode() == 5773) {
-                            if (StringUtils.isEmpty(getUsername())) {
-                                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
-                                FacesContext context = FacesContext.getCurrentInstance();
-                                return "homePage.xhtml";
-                            }
-                            getUtx().begin();
-                            getCorebankingtable().setBatchcode("700");
-                            getCorebankingtable().setBatchcode2("700");
-                            getCorebankingtable().setBrcode(String.valueOf(acct.getBrcode()));
-                            getCorebankingtable().setCurrency(String.valueOf(acct.getCurrency()));
-                            getCorebankingtable().setCustomernumber(String.valueOf(acct.getCustomercode()));
-                            getCorebankingtable().setLedgercode(String.valueOf(acct.getLedgerCode()));
-                            getCorebankingtable().setNarration(em2.getTerminalLocation());
-                            getCorebankingtable().setSubacccode(String.valueOf(acct.getSubacctcode()));
-                            getCorebankingtable().setTrantype("1");
-                            getCorebankingtable().setAmount(em2.getBillingAmount() / 100);
-                            getAudit().setAction("Generated a CR in the core banking table");
-                            getAudit().setUsername(getUsername());
-                            getAudit().setDateperformed(new Date());
-                            getEm().persist(getAudit());
-                            getEm().persist(getCorebankingtable());
-                            getUtx().commit();
-                        }
-                        if (acct.getLedgerCode() == 5772) {
-                            if (StringUtils.isEmpty(getUsername())) {
-                                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
-                                FacesContext context = FacesContext.getCurrentInstance();
-                                return "homePage.xhtml";
-                            }
-                            getUtx().begin();
-                            getCorebankingtable().setBatchcode("700");
-                            getCorebankingtable().setBatchcode2("700");
-                            getCorebankingtable().setBrcode(String.valueOf(acct.getBrcode()));
-                            getCorebankingtable().setCurrency(String.valueOf(acct.getCurrency()));
-                            getCorebankingtable().setCustomernumber(String.valueOf(acct.getCustomercode()));
-                            getCorebankingtable().setLedgercode(String.valueOf(acct.getLedgerCode()));
-                            getCorebankingtable().setNarration(em2.getTerminalLocation());
-                            getCorebankingtable().setSubacccode(String.valueOf(acct.getSubacctcode()));
-                            getCorebankingtable().setTrantype("2");
-                            getCorebankingtable().setAmount(em2.getBillingAmount() / 100);
-                            getAudit().setAction("Generated a DR in the core banking table");
-                            getAudit().setUsername(getUsername());
-                            getAudit().setDateperformed(new Date());
-                            getEm().persist(getAudit());
-                            getEm().persist(getCorebankingtable());
-                            getUtx().commit();
-                        }
-                    }
-
-                    if (em2.getOriginalMessageType().equalsIgnoreCase("06   ") && em2.getAmountIndicator().equals("CR")) {
-                        if (acct.getLedgerCode() == 5772) {
-                            if (StringUtils.isEmpty(getUsername())) {
-                                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
-                                FacesContext context = FacesContext.getCurrentInstance();
-                                return "homePage.xhtml";
-                            }
-                            // System.out.println("Ledger code " + acct.getLedgerCode() + " card number " + em2.getPan() + " amount indicator " + em2.getAmountIndicator() + " origin message type " + em2.getOriginalMessageType());
-                            getUtx().begin();
-                            getCorebankingtable().setBatchcode("700");
-                            getCorebankingtable().setBatchcode2("700");
-                            getCorebankingtable().setBrcode(String.valueOf(acct.getBrcode()));
-                            getCorebankingtable().setCurrency(String.valueOf(acct.getCurrency()));
-                            getCorebankingtable().setCustomernumber(String.valueOf(acct.getCustomercode()));
-                            getCorebankingtable().setLedgercode(String.valueOf(acct.getLedgerCode()));
-                            getCorebankingtable().setNarration(em2.getTerminalLocation());
-                            getCorebankingtable().setSubacccode(String.valueOf(acct.getSubacctcode()));
-                            getCorebankingtable().setTrantype("2");
-                            getCorebankingtable().setAmount(em2.getBillingAmount() / 100);
-                            getAudit().setAction("Generated a CR in the core banking table");
-                            getAudit().setUsername(getUsername());
-                            getAudit().setDateperformed(new Date());
-                            getEm().persist(getAudit());
-                            getEm().persist(getCorebankingtable());
-                            getUtx().commit();
-                        }
-                    }
-                    count2++;
-                }
-                count++;
-            }
-
-            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_INFO, "!SUCCESS!", "generated the core banking file click on the xls button to download your file thank you ");
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage("accountassign", success);
-
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", e.getMessage());
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage("accountassign", success);
-            return "empTransactions.xhtml";
-        }
-
-    }
-
-    public String assignAccount() {
-        try {
-
-            getEm().find(Cards.class, getCards().getCardnumber());
-            getUtx().begin();
-            getAccounts().setAcctype(1);
-            getAccounts().setBrcode(getBrcode1());
-            getAccounts().setCurrency(getCurrency1());
-            getAccounts().setCustomercode(getCustno1());
-            getAccounts().setLedgerCode(getLedgercode1());
-            getAccounts().setSubacctcode(getSubacccode1());
-            getAccounts().setCardsID(getCards());
-            getEm().persist(getAccounts());
-            getUtx().commit();
-
-            getUtx().begin();
-            getAccounts().setAcctype(2);
-            getAccounts().setBrcode(getBrcode2());
-            getAccounts().setCurrency(getCurrency2());
-            getAccounts().setCustomercode(getCustno2());
-            getAccounts().setLedgerCode(getLedgercode2());
-            getAccounts().setSubacctcode(getSubacccode2());
-            getAccounts().setCardsID(getCards());
-            getEm().persist(getAccounts());
-            getUtx().commit();
-
-            getUtx().begin();
-            getAccounts().setAcctype(3);
-            getAccounts().setBrcode(getBrcode3());
-            getAccounts().setCurrency(getCurrency3());
-            getAccounts().setCustomercode(getCustno3());
-            getAccounts().setLedgerCode(getLedgercode3());
-            getAccounts().setSubacctcode(getSubacccode3());
-            getAccounts().setCardsID(getCards());
-            getEm().persist(getAccounts());
-            getUtx().commit();
-
-            getCards().setAssigned("1");
-            getCards().setAcctnumber(getAcctnumber1() + "," + getAcctnumber2() + "," + getAcctnumber3());
-
-            getAudit().setAction("assigned a card to an account");
-            getAudit().setUsername(getUsername());
-            getAudit().setDateperformed(new Date());
-            getUtx().begin();
-            getEm().merge(getCards());
-
-            getEm().persist(getAudit());
-
-            getUtx().commit();
-            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_INFO, "!SUCCESS!", getCards().getCardnumber() + " has been assigned");
-            FacesContext context = FacesContext.getCurrentInstance();
-
-            context.addMessage("accountassign", success);
-
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", e.getMessage());
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage("accountassign", success);
-            return "insertAccount.xhtml";
-        }
-
-    }
+   
 
     public String getUsername() {
         return username;
@@ -895,32 +509,7 @@ public class iprs {
         this.quotesList = quotesList;
     }
 
-    public Cards getCards() {
-        return Cards;
-    }
-
-    public void setCards(Cards Cards) {
-        this.Cards = Cards;
-    }
-
-    public List<Cards> getCardList() {
-        cardList = getEm().createQuery("SELECT c FROM Cards c WHERE (c.cardnumber LIKE '517322%' OR c.cardnumber LIKE '517314%' OR c.cardnumber LIKE '515450%'  OR c.cardnumber LIKE '417304%') AND c.assigned = '1'").getResultList();
-
-        return cardList;
-    }
-
-    public void setCardList(List<Cards> cardList) {
-        this.cardList = cardList;
-    }
-
-    public List<Cards> getEmptyCardList() {
-        return emptyCardList;
-    }
-
-    public void setEmptyCardList(List<Cards> emptyCardList) {
-        this.emptyCardList = emptyCardList;
-    }
-
+  
     public MeterGaugeChartModel getAssignedMeter() {
         return assignedMeter;
     }
@@ -937,14 +526,6 @@ public class iprs {
         this.unassignedMeter = unassignedMeter;
     }
 
-    public List<Cards> getUnAssignedcardList() {
-        unAssignedcardList = getEm().createQuery("select c from Cards c WHERE  (c.cardnumber LIKE '517322%' OR c.cardnumber LIKE '517314%' OR c.cardnumber LIKE '515450%') AND c.assigned = '0'").getResultList();
-        return unAssignedcardList;
-    }
-
-    public void setUnAssignedcardList(List<Cards> unAssignedcardList) {
-        this.unAssignedcardList = unAssignedcardList;
-    }
 
     public String getAcctnumber1() {
         return acctnumber1;
@@ -1060,38 +641,7 @@ public class iprs {
         this.eventModel = eventModel;
     }
 
-    /**
-     * @return the Accounts
-     */
-    public Accounts getAccounts() {
-        return Accounts;
-    }
-
-    /**
-     * @param Accounts the Accounts to set
-     */
-    public void setAccounts(Accounts Accounts) {
-        this.Accounts = Accounts;
-    }
-
-    /**
-     * @return the AccountsList
-     */
-    public List<Accounts> getAccountsList() {
-        AccountsList = getEm().createQuery("SELECT a FROM Accounts a").getResultList();
-        return AccountsList;
-    }
-
-    /**
-     * @param AccountsList the AccountsList to set
-     */
-    public void setAccountsList(List<Accounts> AccountsList) {
-        this.AccountsList = AccountsList;
-    }
-
-    /**
-     * @return the brcode1
-     */
+  
     public int getBrcode1() {
         return brcode1;
     }
@@ -1299,50 +849,7 @@ public class iprs {
         this.subacccode3 = subacccode3;
     }
 
-    /**
-     * @return the Corebankingtable
-     */
-    public Corebankingtable getCorebankingtable() {
-        return Corebankingtable;
-    }
-
-    /**
-     * @param Corebankingtable the Corebankingtable to set
-     */
-    public void setCorebankingtable(Corebankingtable Corebankingtable) {
-        this.Corebankingtable = Corebankingtable;
-    }
-
-    /**
-     * @return the CorebankingtableList
-     */
-    public List<Corebankingtable> getCorebankingtableList() {
-        CorebankingtableList = getEm().createQuery("SELECT c FROM Corebankingtable c").getResultList();
-        return CorebankingtableList;
-    }
-
-    /**
-     * @param CorebankingtableList the CorebankingtableList to set
-     */
-    public void setCorebankingtableList(List<Corebankingtable> CorebankingtableList) {
-        this.CorebankingtableList = CorebankingtableList;
-    }
-
-    /**
-     * @return the visaCardsList
-     */
-    public List<Cards> getVisaCardsList() {
-        visaCardsList = getEm().createQuery("SELECT c FROM Cards c WHERE c.cardnumber LIKE '417304%' AND c.assigned = '0'").getResultList();
-        return visaCardsList;
-    }
-
-    /**
-     * @param visaCardsList the visaCardsList to set
-     */
-    public void setVisaCardsList(List<Cards> visaCardsList) {
-        this.visaCardsList = visaCardsList;
-    }
-
+  
     /**
      * @return the admins
      */
@@ -1578,6 +1085,37 @@ public class iprs {
      */
     public void setHtmlDataTable(HtmlDataTable htmlDataTable) {
         this.htmlDataTable = htmlDataTable;
+    }
+
+   
+
+    /**
+     * @return the iprsList
+     */
+    public List<Iprs> getIprsList() {
+      iprsList = em.createQuery("select i from Iprs i").getResultList();
+        return iprsList;
+    }
+
+    /**
+     * @param iprsList the iprsList to set
+     */
+    public void setIprsList(List<Iprs> iprsList) {
+        this.iprsList = iprsList;
+    }
+
+    /**
+     * @return the iprs
+     */
+    public Iprs getIprs() {
+        return iprs;
+    }
+
+    /**
+     * @param iprs the iprs to set
+     */
+    public void setIprs(Iprs iprs) {
+        this.iprs = iprs;
     }
 
     /**
