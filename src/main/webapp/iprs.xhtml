@@ -64,7 +64,7 @@
                     </div>`
                 </p:layoutUnit>
                 <p:layoutUnit position="west" size="150" header="SETTINGS" style="border: 0 ; overflow: hidden; font-size: x-small" collapsible="true">
-                         <ui:include src="menu.xhtml" /> 
+                    <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
                         <b>GTBank, Westlands, Skypark towers</b>
@@ -77,7 +77,7 @@
                 </p:layoutUnit>
 
                 <p:layoutUnit position="east" size="150" header="SETTINGS" style="border: 0 ; overflow: hidden; font-size: x-small" collapsible="true">
-                        <ui:include src="menu.xhtml" /> 
+                    <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
                         <b>GTBank, Westlands, Skypark towers</b>
@@ -90,194 +90,39 @@
                 </p:layoutUnit>
                 <p:layoutUnit position="center"  style="border: 0; overflow: hidden; font-size: x-small">
                     <div id="display_content" style=" background : url(images/bg-green.png);">
-                        <p:panel id="spanel"  style=" background: transparent;  position: relative; width: 100%; height: 600px">
+                        <p:panel id="spanel"  style=" background: transparent;  position: relative; width: inherit; height: 600px">
                             <h:panelGrid columns="1">
 
                                 <h:form id="profilefrm" style="width: 100%">   
                                     <p:growl id="msgs" sticky="true" showDetail="true" />
-                                    <p:tabView style="background: transparent; width: 100%; height: auto; border: 0" rendered="#{iprs.account}"> 
-                                        <p:tab title="CARDS ASSIGNED">
+                                    <p:tabView style="background: transparent; width: inherit; height: auto; border: 0"> 
+                                        <p:tab title="QUERY FROM IPRS">
                                             <div>
                                                 <div>
                                                     <h:panelGrid columns="4">
                                                         <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Cards that have been assiged to accounts" value="#{iprs.unassignedMeter}"/>
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Unassigned iprs" value="#{iprs.assignedMeter}"/>
+                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Unstatus iprs" value="#{iprs.assignedMeter}"/>
                                                         <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Logged On users" value="#{iprs.unassignedMeter}"/>
+                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFx00, FF0000" title="Logged On users" value="#{iprs.assignedMeter}"/>
                                                         <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFx00, FF0000" title="Logged On users" value="#{iprs.assignedMeter}"/>
                                                     </h:panelGrid>
                                                 </div>
                                                 <div>
-                                                    <p:dataTable var="iprss" value="#{iprs.iprsList}" widgetVar="iprsTable"
-                                                                 paginator="true" rows="10"
-                                                                 style="background: transparent; font-size: x-small"
-                                                                 id="iprssTable"  
-                                                                 emptyMessage="No iprs found with given criteria">
-                                                        <p:column  filterBy="#{iprss.firstName}" sortBy="#{iprss.firstName}" headerText="firstName">
-                                                            <p:outputLabel style="#{iprss.firstName == '1' ? 'color: Orange' : null}; #{iprss.firstName == '0' ? 'color: Red' : null};"  value="#{iprss.firstName}" />
-                                                        </p:column>
-                                                        <p:column  headerText="second name" sortBy="#{iprss.secondName}"   id="studNumberColumn" filterBy="#{iprss.secondName}">
-                                                            <p:outputLabel  style="#{iprss.secondName == '1' ? 'color: Orange' : null}; #{iprss.assigned == '0' ? 'color: Red' : null};"  value="#{iprss.secondName}" />
-                                                        </p:column>
-                                                        <p:column  filterBy="#{iprss.lastName}" sortBy="#{iprss.lastName}" headerText="lastName">
-                                                            <p:outputLabel  style="#{iprss.lastName == '1' ? 'color: Orange' : null}; #{iprss.lastName == '0' ? 'color: Red' : null};"  value="#{iprss.lastName}" />
-                                                        </p:column>
-                                                        <p:column  filterBy="#{iprss.status}" sortBy="#{iprss.status}" headerText="STATUS">
-                                                            <h:graphicImage value="/images/blinkingButton.gif" rendered="#{iprss.assigned == '0'}" title="#{iprss.cardnumber} belongs to #{iprss.acctnumber} for #{iprss.customername} "  width="10px" height="10px"/>
-                                                            <h:graphicImage value="/images/orangeflashing.png" rendered="#{iprss.assigned == '1'}"  title="#{iprss.cardnumber} belongs to #{iprss.acctnumber} for #{iprss.customername} " width="10px" height="10px"/>
-                                                        </p:column>
-                                                        <p:column >
-
-
-                                                            <p:commandLink   styleClass="si-icon-16x16 si-icon-send" update=":profilefrm:iprsDetail"  style="display: block; color:green; font-size: xx-small; border: 0" oncomplete="PF('iprsDialog').show()" value="!details!"  title="VIEW  #{iprss.customername}">                                                  
-                                                                <f:setPropertyActionListener value="#{iprss}"   target="#{iprs.iprs}" />  
-                                                            </p:commandLink>
-
-                                                        </p:column>
-                                                    </p:dataTable>
-                                                </div>
-                                            </div>
-                                        </p:tab>
-                                        
-                                        <p:tab title="QUERIED TRANSAACTIONS">
-                                            <div>
-                                                <div>
+                                                    <p:growl id="msgs" sticky="true" showDetail="true" />
+                                                    <h:panelGrid columns="1">
+                                                        <div class="labels">ID/Passport/Military Number</div>
+                                                        <div class="text_boxes"> <p:inputText id="username" value="#{iprs.iprs.idiprs}"/></div>
+                                                        <div class="labels">Serial Number</div>
+                                                        <div class="text_boxes"><p:inputText type="password" value="#{iprs.iprs.serialNumber}"/></div>
+                                                    </h:panelGrid>
                                                     <h:panelGrid columns="4">
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Cards that have been assiged to accounts" value="#{iprs.unassignedMeter}"/>
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Unassigned iprs" value="#{iprs.assignedMeter}"/>
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Logged On users" value="#{iprs.unassignedMeter}"/>
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFx00, FF0000" title="Logged On users" value="#{iprs.assignedMeter}"/>
+                                                        <div class="labels"><h:commandButton value="Query the IPRS Database"  image="/images/preferences-system-login.png" action="#{iprs.query}"/></div>
+                                                        <div class="labels"><h:outputText value="Query the IPRS Database"/></div>
                                                     </h:panelGrid>
-                                                </div>
-                                                <div>
-                                                  
                                                 </div>
                                             </div>
                                         </p:tab>
                                     </p:tabView>
-
-
-                                    <p:dialog header="IPRS DETAILS" dynamic="true" widgetVar="iprsDialog"  showEffect="clip"  hideEffect="explode" resizable="false">
-                                        <p:outputPanel id="iprsDetail" style="text-align:center;">
-                                            <div  style="#{iprs.iprs.assigned == '1' ? 'background-image: url(/images/blinkingButton.gif)' : null}" />
-                                            <p:outputLabel value="#{iprs.iprs.cardnumber}"  style="color:RED; font-size: xx-large"/>
-                                            <h:panelGrid columns="4">
-                                                <h:panelGrid columns="1">
-
-
-                                                    <h:graphicImage value="/images/light-green-flash.gif" rendered="#{iprs.iprs.assigned == '1'}" title="#{iprs.iprs.cardnumber} belongs to #{iprs.iprs.acctnumber} for #{iprs.iprs.customername} "  width="20px" height="20px"/>
-                                                    <h:graphicImage value="/images/FlashingYellow.gif" rendered="#{iprs.iprs.assigned == ' '}"  title="#{iprs.iprs.cardnumber} belongs to #{iprs.iprs.acctnumber} for #{iprs.iprs.customername} " width="20px" height="20px"/>
-
-                                                    <p:panel>
-                                                        <h:panelGrid columns="1">
-                                                            <h:commandButton value="iprs"  style=" width:150px; height: 150px"  image="images/GTBANK-CARD.png" rendered="true" />
-                                                            <h:commandButton value="iprs"  style=" width:150px; height: 150px"  image="images/GTBANK-CARD2.jpg" rendered="true" />
-                                                        </h:panelGrid>
-                                                    </p:panel>
-
-
-                                                </h:panelGrid>
-                                                <h:panelGrid columns="1">
-
-
-                                                    <h:panelGrid columns="3">
-                                                        <p:outputLabel value="ACCOUNT NUMBER"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.acctnumber}" />
-                                                        <p:outputLabel value="ACCOUNT STATUS"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel  style="color:RED" value="#{iprs.iprs.acctstatus}"/>
-                                                        <p:outputLabel value="ACTIVE DAYS"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.activedays}"/>
-                                                        <p:outputLabel value="ADDRESS"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.address}"/>
-                                                        <p:outputLabel value="BLOCK REISSUE"/>
-                                                        <p:outputLabel value="  :  "/> 
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.blockreissue}"/>
-                                                        <p:outputLabel value="BRANCH NAME"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.branchname}" />
-                                                        <p:outputLabel value="CARDS ACTIVATION"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel  style="color:RED" value="#{iprs.iprs.cardactivation}"/>
-                                                        <p:outputLabel value="CARD CREATION"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.cardcreation}"/>
-                                                        <p:outputLabel value="TYPE"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.productname}"/>
-                                                        <p:outputLabel value="CLIENT ID"/>
-                                                        <p:outputLabel value="  :  "/> 
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.clientId}"/>
-                                                        <p:outputLabel value="CMS STATUS"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.cmsstatus}" />
-                                                        <p:outputLabel value="CONTRACT CREATION"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel  style="color:RED" value="#{iprs.iprs.contractcreation}"/>
-                                                        <p:outputLabel value="CONTRACT NUMBER"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.contractnumber}"/>
-                                                        <p:outputLabel value="CONTRACT TYPE"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.contracttype}"/>
-                                                        <p:outputLabel value="CUSTOMER NAME"/>
-                                                        <p:outputLabel value="  :  "/> 
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.customername}"/>
-                                                        <p:outputLabel value="DEBIT FINANCIAL PROFILE NAME"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.debitfinprofname}" />
-                                                        <p:outputLabel value="EMAIL"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel  style="color:RED" value="#{iprs.iprs.email}"/>
-                                                        <p:outputLabel value="EMBOSSING NAME"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.embossingname}"/>
-                                                        <p:outputLabel value="EXPIRY DATE"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.expirydate}"/>
-                                                        <p:outputLabel value="EXTERNAL ACCOUNT"/>
-                                                        <p:outputLabel value="  :  "/> 
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.externalaccount}"/>
-                                                        <p:outputLabel value="FINANCIAL PROFILE"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.financialprofile}" />
-                                                        <p:outputLabel value="ISSUANCE PRIORITY"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel  style="color:RED" value="#{iprs.iprs.issuancepriority}"/>
-                                                        <p:outputLabel value="ISSUANCE REASON"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.issuancereason}"/>
-                                                        <p:outputLabel value="MOBILE NUMBER"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.mobilenumber}"/>
-                                                        <p:outputLabel value="ONLINE STATUS"/>
-                                                        <p:outputLabel value="  :  "/> 
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.onlinestatus}"/>
-                                                        <p:outputLabel value="PHONE NUMBER"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.phonenumber}" />
-                                                        <p:outputLabel value="PRODUCT NAME"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel  style="color:RED" value="#{iprs.iprs.productname}"/>
-                                                        <p:outputLabel value="TELEBANK ID"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.telebankID}"/>
-                                                        <p:outputLabel value="USER ID"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.userid}"/>
-                                                        <p:outputLabel value="ACCOUNT LIMIT"/>
-                                                        <p:outputLabel value="  :  "/> 
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.accountlimit}"/>
-                                                        <p:outputLabel value="CONTRACT LIMIT"/>
-                                                        <p:outputLabel value="  :  "/>
-                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.contractlimit}"/>
-                                                    </h:panelGrid>
-                                                </h:panelGrid>
-                                            </h:panelGrid>
-                                        </p:outputPanel>
-                                    </p:dialog> 
                                 </h:form>
                             </h:panelGrid>
                         </p:panel>

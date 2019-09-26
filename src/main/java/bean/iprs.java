@@ -117,11 +117,6 @@ public class iprs {
         }
     }
 
- 
-
- 
-
-
     private void createMeterGaugeModels() {
         setUnassignedMeter(assigned());
         setAssignedMeter(unassigned());
@@ -218,7 +213,7 @@ public class iprs {
         return null;
     }
 
-    public String createGroup() {
+    public String createIprs() {
         try {
             if (StringUtils.isEmpty(getUsername())) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
@@ -226,20 +221,31 @@ public class iprs {
                 context.addMessage("loginInfoMessages", message);
                 return "homePage.xhtml";
             }
+            getUtx().begin();
+            getAdmins().setDateCreated(new java.util.Date());
+            getAudit().setAction("created an iprs query");
+            getAudit().setUsername(getUsername());
+            getAudit().setDateperformed(new Date());
+            getEm().persist(getAudit());
+            getEm().persist(iprs);
+            getUtx().commit();
 
-            for (int i = 0; i < getSelectedResponsibilities().length; i++) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully created " + iprs.getFirstName());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+        } catch (Exception ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+            ex.printStackTrace();
+        }
+        return null;
+    }
 
-                getUtx().begin();
-                getGroups().setDescription(getGroups().getDescription());
-                getGroups().setGroupName(getGroups().getGroupName());
-                getGroups().setResponsibilities(getSelectedResponsibilities()[i]);
-                getAudit().setAction("created an group");
-                getAudit().setUsername(getUsername());
-                getAudit().setDateperformed(new Date());
-                getEm().persist(getAudit());
-                getEm().persist(getGroups());
-                getUtx().commit();
-            }
+
+    public String Query() {
+        try {
+
         } catch (Exception ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
             FacesContext context = FacesContext.getCurrentInstance();
@@ -482,8 +488,6 @@ public class iprs {
         return "empTransactions.xhtml";
     }
 
-   
-
     public String getUsername() {
         return username;
     }
@@ -509,7 +513,6 @@ public class iprs {
         this.quotesList = quotesList;
     }
 
-  
     public MeterGaugeChartModel getAssignedMeter() {
         return assignedMeter;
     }
@@ -525,7 +528,6 @@ public class iprs {
     public void setUnassignedMeter(MeterGaugeChartModel unassignedMeter) {
         this.unassignedMeter = unassignedMeter;
     }
-
 
     public String getAcctnumber1() {
         return acctnumber1;
@@ -641,7 +643,6 @@ public class iprs {
         this.eventModel = eventModel;
     }
 
-  
     public int getBrcode1() {
         return brcode1;
     }
@@ -849,7 +850,6 @@ public class iprs {
         this.subacccode3 = subacccode3;
     }
 
-  
     /**
      * @return the admins
      */
@@ -1087,13 +1087,11 @@ public class iprs {
         this.htmlDataTable = htmlDataTable;
     }
 
-   
-
     /**
      * @return the iprsList
      */
     public List<Iprs> getIprsList() {
-      iprsList = em.createQuery("select i from Iprs i").getResultList();
+        iprsList = em.createQuery("select i from Iprs i").getResultList();
         return iprsList;
     }
 
