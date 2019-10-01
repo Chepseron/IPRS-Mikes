@@ -677,7 +677,7 @@ public class iprs {
             System.out.println("id number = " + IDNumber);
             org.tempuri.IServiceIPRS port = service.getBasicHttpBindingIServiceIPRS();
             org.datacontract.schemas._2004._07.iprsmanager.HumanInfoFromIDCard result = port.getDataByIdCard("zhassan", "Nimo-2018*", IDNumber, SerialNumber);
-
+            iprs = new Iprs();
             iprs.setIdnumber(Integer.parseInt(result.getIDNumber().getValue()));
             iprs.setCreatedOn(new java.util.Date().toString());
             iprs.setFirstName(result.getFirstName().getValue());
