@@ -40,8 +40,8 @@
         </dependency>
         <dependency>
             <groupId>org.primefaces.themes</groupId>
-            <artifactId>all-themes</artifactId>
-            <version>1.0.10</version>
+            <artifactId>glass-x</artifactId>
+            <version>1.0.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -53,6 +53,17 @@
             <artifactId>commons-fileupload</artifactId>
             <version>1.2</version>
         </dependency>
+        
+        
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>3.5.0-beta-1</version>
+        </dependency>
+
+        
+        
+        
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -75,6 +86,7 @@
 
     <build>
         <plugins>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -93,6 +105,16 @@
                 <version>2.3</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <directory>src</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <includes>
+                                <include>jax-ws-catalog.xml</include>
+                                <include>wsdl/**</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>
@@ -120,9 +142,49 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>10.1.1.5_9004/IPRSServerwcf.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <staleFile>${project.build.directory}/jaxws/stale/IPRSServerwcf.stale</staleFile>
+                        </configuration>
+                        <id>wsimport-generate-IPRSServerwcf</id>
+                        <phase>generate-sources</phase>
+                    </execution>
+                    
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.xml</groupId>
+                        <artifactId>webservices-api</artifactId>
+                        <version>2.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <sourceDestDir>${project.build.directory}/generated-sources/jaxws-wsimport</sourceDestDir>
+                    <xnocompile>true</xnocompile>
+                    <verbose>true</verbose>
+                    <extension>true</extension>
+                    <catalog>${basedir}/src/jax-ws-catalog.xml</catalog>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <repositories>
+        <repository>
+            <id>prime-repo</id>
+            <name>Prime Repo</name>
+            <url>http://repository.primefaces.org</url>
+        </repository>
         <repository>
             <url>http://repository.primefaces.org/</url>
             <id>PrimeFaces-maven-lib</id>

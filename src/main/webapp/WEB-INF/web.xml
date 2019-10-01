@@ -51,20 +51,13 @@
             c:\tmp\
         </param-value> 
     </context-param>
-    <listener>
-        <listener-class>CardsUpdater</listener-class>
-    </listener>
     <context-param>
         <param-name>primefaces.THEME</param-name>
-        <param-value>sunny</param-value>
-    </context-param>
-    <session-config>
+        <param-value>glass-x</param-value>
+    </context-param><session-config>
         <session-timeout>
             0
         </session-timeout>
-    </session-config>
-
-    <welcome-file-list>
+    </session-config><welcome-file-list>
         <welcome-file>faces/homePage.xhtml</welcome-file>
-    </welcome-file-list>
-</web-app>
+    </welcome-file-list></web-app>

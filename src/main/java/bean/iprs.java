@@ -20,21 +20,31 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpSession;
 import javax.transaction.UserTransaction;
+import javax.xml.ws.WebServiceRef;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.plexus.util.Base64;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleModel;
 import org.primefaces.model.chart.MeterGaugeChartModel;
+import org.tempuri.ServerInterface;
 
 @ManagedBean(name = "iprs")
 @SessionScoped
-public class iprs {
 
+public class iprs {
+    
+    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/10.1.1.5_9004/IPRSServerwcf.wsdl")
+    private ServerInterface service;
+    
     @PersistenceContext(name = "com.mycompany_cardMaven_war_1.0-SNAPSHOTPU")
     private EntityManager em;
     @Resource
     private UserTransaction utx;
+    
+    private String IDNumber;
+    private String SerialNumber;
     private String username;
     private String password;
     private String newPassword;
@@ -49,13 +59,13 @@ public class iprs {
     private List<Iprs> iprsList = new ArrayList();
     private Admins admins = new Admins();
     private List<Admins> adminsList = new ArrayList();
-
+    
     private Groups groups = new Groups();
     private List<Groups> GroupsList = new ArrayList();
-
+    
     private List<Admins> adminsListBlank = new ArrayList();
     private List<Groups> groupsListBlank = new ArrayList();
-
+    
     private List<Quotes> quotesList = new ArrayList();
     private ScheduleModel eventModel;
     private ScheduleModel lazyEventModel;
@@ -66,23 +76,23 @@ public class iprs {
     private int currency1;
     private int ledgercode1;
     private int subacccode1;
-
+    
     private int brcode2;
     private int custno2;
     private int currency2;
     private int ledgercode2;
     private int subacccode2;
-
+    
     private int brcode3;
     private int custno3;
     private int currency3;
     private int ledgercode3;
     private int subacccode3;
-
+    
     private String acctnumber1;
     private String acctnumber2;
     private String acctnumber3;
-
+    
     private boolean user = false;
     private boolean group = false;
     private boolean account = false;
@@ -90,10 +100,10 @@ public class iprs {
     private boolean empview = false;
     private boolean corebanking = false;
     private boolean accountsview = false;
-
+    
     public iprs() {
     }
-
+    
     @PostConstruct
     public void init() {
         try {
@@ -107,7 +117,7 @@ public class iprs {
                 public void loadEvents(Date start, Date end) {
                     Date random = iprs.this.getRandomDate(start);
                     addEvent(new DefaultScheduleEvent("Lazy Event 1", random, random));
-
+                    
                     random = iprs.this.getRandomDate(start);
                     addEvent(new DefaultScheduleEvent("Lazy Event 2", random, random));
                 }
@@ -116,16 +126,16 @@ public class iprs {
             e.printStackTrace();
         }
     }
-
+    
     private void createMeterGaugeModels() {
         setUnassignedMeter(assigned());
         setAssignedMeter(unassigned());
     }
-
+    
     public String changePassword() {
-
+        
         try {
-
+            
             if (!newPassword.equals(confirmPword)) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Passwords dont match");
                 FacesContext context = FacesContext.getCurrentInstance();
@@ -141,7 +151,7 @@ public class iprs {
                 getEm().persist(getAudit());
                 getEm().merge(getAdmins());
                 getUtx().commit();
-
+                
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully changed your password");
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage("loginInfoMessages", message);
@@ -154,11 +164,11 @@ public class iprs {
         }
         return null;
     }
-
+    
     public String resetPassword() {
-
+        
         try {
-
+            
             admins.setPassword("123456");
             getUtx().begin();
             getAdmins().setDateCreated(new java.util.Date());
@@ -168,11 +178,11 @@ public class iprs {
             getEm().persist(getAudit());
             getEm().merge(admins);
             getUtx().commit();
-
+            
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully changed " + admins.getUsername() + "'s password");
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("loginInfoMessages", message);
-
+            
         } catch (Exception ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
             FacesContext context = FacesContext.getCurrentInstance();
@@ -181,9 +191,9 @@ public class iprs {
         }
         return null;
     }
-
+    
     public String createAdmin() {
-
+        
         System.out.println("imefika hapa");
         try {
             if (StringUtils.isEmpty(getUsername())) {
@@ -200,7 +210,7 @@ public class iprs {
             getEm().persist(getAudit());
             getEm().persist(getAdmins());
             getUtx().commit();
-
+            
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully created " + admins.getFirstName());
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("loginInfoMessages", message);
@@ -212,7 +222,7 @@ public class iprs {
         }
         return null;
     }
-
+    
     public String createIprs() {
         try {
             if (StringUtils.isEmpty(getUsername())) {
@@ -229,7 +239,7 @@ public class iprs {
             getEm().persist(getAudit());
             getEm().persist(iprs);
             getUtx().commit();
-
+            
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully created " + iprs.getFirstName());
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("loginInfoMessages", message);
@@ -241,11 +251,10 @@ public class iprs {
         }
         return null;
     }
-
-
+    
     public String Query() {
         try {
-
+            
         } catch (Exception ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
             FacesContext context = FacesContext.getCurrentInstance();
@@ -257,7 +266,7 @@ public class iprs {
         context.addMessage("loginInfoMessages", message);
         return null;
     }
-
+    
     public String editAdmin() {
         try {
             if (StringUtils.isEmpty(getUsername())) {
@@ -279,17 +288,17 @@ public class iprs {
         }
         return null;
     }
-
+    
     private MeterGaugeChartModel assigned() {
         List<Number> intervals = new ArrayList() {
         };
         for (int i = 0; i < 200; i++) {
             intervals.add(i + 20);
         }
-
+        
         return new MeterGaugeChartModel(Integer.valueOf(130), intervals);
     }
-
+    
     private MeterGaugeChartModel unassigned() {
         List<Number> intervals = new ArrayList() {
         };
@@ -298,99 +307,99 @@ public class iprs {
         }
         return new MeterGaugeChartModel(Integer.valueOf(130), intervals);
     }
-
+    
     public Date getRandomDate(Date base) {
         Calendar date = Calendar.getInstance();
         date.setTime(base);
         date.add(5, (int) (Math.random() * 30.0D) + 1);
-
+        
         return date.getTime();
     }
-
+    
     public Date getInitialDate() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(1), 1, calendar.get(5), 0, 0, 0);
-
+        
         return calendar.getTime();
     }
-
+    
     private Calendar today() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(1), calendar.get(2), calendar.get(5), 0, 0, 0);
-
+        
         return calendar;
     }
-
+    
     private Date previousDay8Pm() {
         Calendar t = (Calendar) today().clone();
         t.set(9, 1);
         t.set(5, t.get(5) - 1);
         t.set(10, 8);
-
+        
         return t.getTime();
     }
-
+    
     private Date previousDay11Pm() {
         Calendar t = (Calendar) today().clone();
         t.set(9, 1);
         t.set(5, t.get(5) - 1);
         t.set(10, 11);
-
+        
         return t.getTime();
     }
-
+    
     private Date today1Pm() {
         Calendar t = (Calendar) today().clone();
         t.set(9, 1);
         t.set(10, 1);
-
+        
         return t.getTime();
     }
-
+    
     private Date theDayAfter3Pm() {
         Calendar t = (Calendar) today().clone();
         t.set(5, t.get(5) + 2);
         t.set(9, 1);
         t.set(10, 3);
-
+        
         return t.getTime();
     }
-
+    
     private Date today6Pm() {
         Calendar t = (Calendar) today().clone();
         t.set(9, 1);
         t.set(10, 6);
-
+        
         return t.getTime();
     }
-
+    
     private Date nextDay9Am() {
         Calendar t = (Calendar) today().clone();
         t.set(9, 0);
         t.set(5, t.get(5) + 1);
         t.set(10, 9);
-
+        
         return t.getTime();
     }
-
+    
     private Date nextDay11Am() {
         Calendar t = (Calendar) today().clone();
         t.set(9, 0);
         t.set(5, t.get(5) + 1);
         t.set(10, 11);
-
+        
         return t.getTime();
     }
-
+    
     private Date fourDaysLater3pm() {
         Calendar t = (Calendar) today().clone();
         t.set(9, 1);
         t.set(5, t.get(5) + 4);
         t.set(10, 3);
-
+        
         return t.getTime();
     }
-
+    
     public String login() {
         try {
             if (StringUtils.isEmpty(getUsername())) {
@@ -399,9 +408,9 @@ public class iprs {
                 context.addMessage("loginInfoMessages", message);
                 return "homePage.xhtml";
             }
-
+            
             setAdmins((Admins) getEm().createQuery("select a from Admins a where a.username='" + getUsername() + "' and a.password = '" + getPassword() + "'").getSingleResult());
-
+            
             GroupsList = em.createQuery("select g from Groups g where g.groupName = '" + admins.getGroupID().getGroupName() + "'").getResultList();
             for (Groups g : GroupsList) {
                 if (g.getResponsibilities().equalsIgnoreCase("emp")) {
@@ -410,14 +419,14 @@ public class iprs {
                 }
                 if (g.getResponsibilities().equalsIgnoreCase("users")) {
                     setUser(true);
-
+                    
                 }
                 if (g.getResponsibilities().equalsIgnoreCase("groups")) {
                     setGroup(true);
                 }
                 if (g.getResponsibilities().equalsIgnoreCase("accounts")) {
                     setAccount(true);
-
+                    
                 }
                 if (g.getResponsibilities().equalsIgnoreCase("accountsview")) {
                     setAccountsview(true);
@@ -427,7 +436,7 @@ public class iprs {
                 }
                 if (g.getResponsibilities().equalsIgnoreCase("corebanking")) {
                     setCorebanking(true);
-
+                    
                 }
             }
             getUtx().begin();
@@ -436,7 +445,7 @@ public class iprs {
             getAudit().setDateperformed(new Date());
             getEm().persist(getAudit());
             getUtx().commit();
-
+            
             return "iprs.xhtml?faces-redirect=true";
         } catch (Exception e) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please provide correct credentials");
@@ -446,7 +455,7 @@ public class iprs {
         }
         return null;
     }
-
+    
     public String logout() {
         try {
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -461,7 +470,7 @@ public class iprs {
         }
         return null;
     }
-
+    
     public String deleteCoreBanking() {
         try {
             if (StringUtils.isEmpty(getUsername())) {
@@ -474,115 +483,115 @@ public class iprs {
             getAudit().setUsername(getUsername());
             getAudit().setDateperformed(new Date());
             getEm().persist(getAudit());
-
+            
             getEm().createNativeQuery("truncate corebankingtable").executeUpdate();
             getUtx().commit();
-
+            
         } catch (Exception ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage());
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("loginInfoMessages", message);
             ex.printStackTrace();
-
+            
         }
         return "empTransactions.xhtml";
     }
-
+    
     public String getUsername() {
         return username;
     }
-
+    
     public void setUsername(String username) {
         this.username = username;
     }
-
+    
     public String getPassword() {
         return password;
     }
-
+    
     public void setPassword(String password) {
         this.password = password;
     }
-
+    
     public List<Quotes> getQuotesList() {
         quotesList = getEm().createQuery("SELECT  q from Quotes q").getResultList();
         return quotesList;
     }
-
+    
     public void setQuotesList(List<Quotes> quotesList) {
         this.quotesList = quotesList;
     }
-
+    
     public MeterGaugeChartModel getAssignedMeter() {
         return assignedMeter;
     }
-
+    
     public void setAssignedMeter(MeterGaugeChartModel assignedMeter) {
         this.assignedMeter = assignedMeter;
     }
-
+    
     public MeterGaugeChartModel getUnassignedMeter() {
         return unassignedMeter;
     }
-
+    
     public void setUnassignedMeter(MeterGaugeChartModel unassignedMeter) {
         this.unassignedMeter = unassignedMeter;
     }
-
+    
     public String getAcctnumber1() {
         return acctnumber1;
     }
-
+    
     public void setAcctnumber1(String acctnumber1) {
         this.acctnumber1 = acctnumber1;
     }
-
+    
     public String getAcctnumber2() {
         return acctnumber2;
     }
-
+    
     public void setAcctnumber2(String acctnumber2) {
         this.acctnumber2 = acctnumber2;
     }
-
+    
     public String getAcctnumber3() {
         return acctnumber3;
     }
-
+    
     public void setAcctnumber3(String acctnumber3) {
         this.acctnumber3 = acctnumber3;
     }
-
+    
     public Audittrails getAudit() {
         return audit;
     }
-
+    
     public void setAudit(Audittrails audit) {
         this.audit = audit;
     }
-
+    
     public List<Audittrails> getAuditList() {
         auditList = getEm().createQuery("SELECT a FROM Audittrails a").getResultList();
         return auditList;
     }
-
+    
     public void setAuditList(List<Audittrails> auditList) {
         this.auditList = auditList;
     }
-
+    
     public Emp getEmp() {
         return emp;
     }
-
+    
     public void setEmp(Emp emp) {
         this.emp = emp;
     }
-
+    
     public List<Emp> getEmpList() {
         EmpList = getEm().createQuery("SELECT e FROM Emp e").getResultList();
         return EmpList;
     }
-
+    
     public void setEmpList(List<Emp> EmpList) {
         this.EmpList = EmpList;
     }
@@ -642,7 +651,7 @@ public class iprs {
     public void setEventModel(ScheduleModel eventModel) {
         this.eventModel = eventModel;
     }
-
+    
     public int getBrcode1() {
         return brcode1;
     }
@@ -771,6 +780,81 @@ public class iprs {
      */
     public int getSubacccode2() {
         return subacccode2;
+    }
+    
+    public String verifyByIDCard2() {
+        try { // Call Web Service Operation
+            iprs.setPhoto("");
+            System.out.println("id number = " + IDNumber);
+            org.tempuri.IServiceIPRS port = service.getBasicHttpBindingIServiceIPRS();
+            org.datacontract.schemas._2004._07.iprsmanager.HumanInfoFromIDCard result = port.getDataByIdCard("zhassan", "Nimo-2018*", IDNumber, SerialNumber);
+            
+            iprs.setIdnumber(Integer.parseInt(result.getIDNumber().getValue()));
+            iprs.setCreatedOn(new java.util.Date().toString());
+            iprs.setFirstName(result.getFirstName().getValue());
+            iprs.setSublocation(result.getPlaceOfBirth().getValue());
+            iprs.setDob(result.getDateOfBirth().getValue());
+            iprs.setPlaceOfIssue(result.getPlaceOfLive().getValue());
+            iprs.setSecondName(result.getOtherName().getValue());
+            iprs.setLastName(result.getSurname().getValue());
+            iprs.setGender(result.getGender().getValue());
+            
+            String imageString = new String(Base64.encodeBase64(result.getPhoto().getValue()));
+            
+            iprs.setPhoto(imageString);
+            
+            System.out.println(result.getPhoto().getValue());
+            
+            return result.toString();
+            
+        } catch (Exception ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("msgs", message);
+            
+            return ex.getMessage();
+        }
+    }
+    
+    public String verifyByPassport() {
+        try { // Call Web Service Operation
+            StringBuilder br = new StringBuilder();
+            org.tempuri.IServiceIPRS port = service.getBasicHttpBindingIServiceIPRS();
+            // TODO initialize WS operation arguments here
+
+            org.datacontract.schemas._2004._07.iprsmanager.HumanInfoFromPassport result = port.getDataByPassport("zhassan", "Nimo-2018*", "24655940", "700982348");
+            System.out.println("Result = " + result);
+            
+            br.append(result.getCitizenship().getValue() + "\n"
+                    + result.getFirstName().getValue() + "\n"
+                    + result.getClan().getValue() + "\n"
+                    + result.getDateOfBirth().getValue() + "\n"
+                    + result.getEthnicGroup().getValue() + "\n"
+                    + result.getDateOfBirth().getValue() + "\n"
+                    + result.getDateOfIssue().getValue() + "\n"
+                    + result.getFamily().getValue() + "\n"
+                    + result.getGender().getValue() + "\n"
+                    + result.getIDNumber().getValue() + "\n"
+                    + result.getOccupation().getValue() + "\n"
+                    + result.getOtherName().getValue() + "\n"
+                    + result.getPhoto().getValue() + "\n"
+                    + result.getPin().getValue() + "\n"
+                    + result.getSurname().getValue() + "\n"
+                    + result.getErrorMessage().getValue() + "\n");
+            
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!SUCCESS!", br.toString());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("msgs", message);
+            
+            return result.toString();
+            
+        } catch (Exception ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("msgs", message);
+            
+            return ex.getMessage();
+        }
     }
 
     /**
@@ -921,7 +1005,7 @@ public class iprs {
     public void setGroupsList(List<Groups> GroupsList) {
         this.GroupsList = GroupsList;
     }
-
+    
     public boolean isUser() {
         return user;
     }
@@ -1114,6 +1198,34 @@ public class iprs {
      */
     public void setIprs(Iprs iprs) {
         this.iprs = iprs;
+    }
+
+    /**
+     * @return the IDNumber
+     */
+    public String getIDNumber() {
+        return IDNumber;
+    }
+
+    /**
+     * @param IDNumber the IDNumber to set
+     */
+    public void setIDNumber(String IDNumber) {
+        this.IDNumber = IDNumber;
+    }
+
+    /**
+     * @return the SerialNumber
+     */
+    public String getSerialNumber() {
+        return SerialNumber;
+    }
+
+    /**
+     * @param SerialNumber the SerialNumber to set
+     */
+    public void setSerialNumber(String SerialNumber) {
+        this.SerialNumber = SerialNumber;
     }
 
     /**
