@@ -27,23 +27,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author akiptoo
+ * @author Amon.Sabul
  */
 @Entity
 @Table(name = "admins")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Admins.findAll", query = "SELECT a FROM Admins a"),
-    @NamedQuery(name = "Admins.findByAdminId", query = "SELECT a FROM Admins a WHERE a.adminId = :adminId"),
-    @NamedQuery(name = "Admins.findByFirstName", query = "SELECT a FROM Admins a WHERE a.firstName = :firstName"),
-    @NamedQuery(name = "Admins.findByLastName", query = "SELECT a FROM Admins a WHERE a.lastName = :lastName"),
-    @NamedQuery(name = "Admins.findByPhone", query = "SELECT a FROM Admins a WHERE a.phone = :phone"),
-    @NamedQuery(name = "Admins.findByUsername", query = "SELECT a FROM Admins a WHERE a.username = :username"),
-    @NamedQuery(name = "Admins.findByPassword", query = "SELECT a FROM Admins a WHERE a.password = :password"),
-    @NamedQuery(name = "Admins.findByEmailAdd", query = "SELECT a FROM Admins a WHERE a.emailAdd = :emailAdd"),
-    @NamedQuery(name = "Admins.findByMiddlename", query = "SELECT a FROM Admins a WHERE a.middlename = :middlename"),
-    @NamedQuery(name = "Admins.findByDateCreated", query = "SELECT a FROM Admins a WHERE a.dateCreated = :dateCreated")})
+    @NamedQuery(name = "Admins.findAll", query = "SELECT a FROM Admins a")
+    , @NamedQuery(name = "Admins.findByAdminId", query = "SELECT a FROM Admins a WHERE a.adminId = :adminId")
+    , @NamedQuery(name = "Admins.findByFirstName", query = "SELECT a FROM Admins a WHERE a.firstName = :firstName")
+    , @NamedQuery(name = "Admins.findByLastName", query = "SELECT a FROM Admins a WHERE a.lastName = :lastName")
+    , @NamedQuery(name = "Admins.findByPhone", query = "SELECT a FROM Admins a WHERE a.phone = :phone")
+    , @NamedQuery(name = "Admins.findByUsername", query = "SELECT a FROM Admins a WHERE a.username = :username")
+    , @NamedQuery(name = "Admins.findByPassword", query = "SELECT a FROM Admins a WHERE a.password = :password")
+    , @NamedQuery(name = "Admins.findByEmailAdd", query = "SELECT a FROM Admins a WHERE a.emailAdd = :emailAdd")
+    , @NamedQuery(name = "Admins.findByMiddlename", query = "SELECT a FROM Admins a WHERE a.middlename = :middlename")
+    , @NamedQuery(name = "Admins.findByDateCreated", query = "SELECT a FROM Admins a WHERE a.dateCreated = :dateCreated")
+    , @NamedQuery(name = "Admins.findByStatus", query = "SELECT a FROM Admins a WHERE a.status = :status")})
 public class Admins implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,6 +79,10 @@ public class Admins implements Serializable {
     @Column(name = "dateCreated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "status")
+    private int status;
     @JoinColumn(name = "groupID", referencedColumnName = "idgroups")
     @ManyToOne(optional = false)
     private Groups groupID;
@@ -88,9 +94,10 @@ public class Admins implements Serializable {
         this.adminId = adminId;
     }
 
-    public Admins(Integer adminId, Date dateCreated) {
+    public Admins(Integer adminId, Date dateCreated, int status) {
         this.adminId = adminId;
         this.dateCreated = dateCreated;
+        this.status = status;
     }
 
     public Integer getAdminId() {
@@ -163,6 +170,14 @@ public class Admins implements Serializable {
 
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public Groups getGroupID() {

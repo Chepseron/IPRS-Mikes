@@ -67,12 +67,10 @@
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                        <b>taajmoney transfer, Westlands, Skypark towers</b>
-                        P.O.Box ***** - 01 NAIROBI
-                        Mobile:+254-72********
-                        Mobile:+254-72********
-                        Mobile:+254-72********
-                        Email:info@taajmoneytransfer.com
+                         <b>taajmoneytransfer, Nairobi CBD, teleposta towers</b>
+                        P.O. Box 47583 – 00100 Nairobi
+                        Tel:020-2321972/ 0722701990
+                        globalfrx@gmail.com
                     </fieldset>
                 </p:layoutUnit>
 
@@ -80,12 +78,10 @@
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                        <b>taajmoney transfer, Westlands, Skypark towers</b>
-                        P.O.Box ***** - 01 NAIROBI
-                        Mobile:+254-72********
-                        Mobile:+254-72********
-                        Mobile:+254-72********
-                        Email:info@taajmoneytransfer.com
+                       <b>taajmoneytransfer, Nairobi CBD, teleposta towers</b>
+                        P.O. Box 47583 – 00100 Nairobi
+                        Tel:020-2321972/ 0722701990
+                        globalfrx@gmail.com
                     </fieldset> 
                 </p:layoutUnit>
                 <p:layoutUnit position="center"  style="border: 0; overflow: hidden; font-size: x-small">
@@ -122,8 +118,6 @@
                                                         <p:outputLabel value="#{iprs.iprs.firstName} #{iprs.iprs.secondName}  #{iprs.iprs.lastName} "  style="color:RED; font-size: xx-large"/>
                                                         <h:panelGrid columns="4">
                                                             <h:panelGrid columns="1">
-
-
                                                                 <h:graphicImage value="/images/light-green-flash.gif" rendered="#{iprs.iprs.status == '1'}" title="#{iprs.iprs.firstName} belongs to #{iprs.iprs.secondName} for #{iprs.iprs.lastName} "  width="20px" height="20px"/>
                                                                 <h:graphicImage value="/images/FlashingYellow.gif" rendered="#{iprs.iprs.status == ' '}"  title="#{iprs.iprs.firstName} belongs to #{iprs.iprs.secondName} for #{iprs.iprs.lastName} " width="20px" height="20px"/>
                                                                 <p:panel>
@@ -131,8 +125,6 @@
                                                                         <img src="data:image/png;base64,#{iprs.iprs.photo}"/>     
                                                                     </h:panelGrid>
                                                                 </p:panel>
-
-
                                                             </h:panelGrid>
                                                             <h:panelGrid columns="1">
                                                                 <h:panelGrid columns="3">
@@ -154,36 +146,21 @@
                                                                     <p:outputLabel value="Date Of Issue"/>
                                                                     <p:outputLabel value="  :  "/>
                                                                     <p:outputLabel style="color:RED"  value="#{iprs.iprs.dateOfIssue}" />
-                                                                    <p:outputLabel value="District"/>
-                                                                    <p:outputLabel value="  :  "/>
-                                                                    <p:outputLabel  style="color:RED" value="#{iprs.iprs.district}"/>
-                                                                    <p:outputLabel value="District Of Birth"/>
-                                                                    <p:outputLabel value="  :  "/>
-                                                                    <p:outputLabel style="color:RED"  value="#{iprs.iprs.districtOfBirth}"/>
-                                                                    <p:outputLabel value="Division"/>
-                                                                    <p:outputLabel value="  :  "/>
-                                                                    <p:outputLabel style="color:RED"  value="#{iprs.iprs.division}"/>
                                                                     <p:outputLabel value="DOB"/>
                                                                     <p:outputLabel value="  :  "/> 
                                                                     <p:outputLabel style="color:RED"  value="#{iprs.iprs.dob}"/>
+                                                                    <p:outputLabel value="Date of Death"/>
+                                                                    <p:outputLabel value="  :  "/> 
+                                                                    <p:outputLabel style="color:RED"  value="#{iprs.iprs.dateOfIssue}"/>
                                                                     <p:outputLabel value="Sex"/>
                                                                     <p:outputLabel value="  :  "/>
                                                                     <p:outputLabel style="color:RED"  value="#{iprs.iprs.gender}" />
                                                                     <p:outputLabel value="Holders Signature"/>
                                                                     <p:outputLabel value="  :  "/>
                                                                     <p:outputLabel  style="color:RED" value="#{iprs.iprs.holdersSign}"/>
-                                                                    <p:outputLabel value="Location"/>
-                                                                    <p:outputLabel value="  :  "/>
-                                                                    <p:outputLabel style="color:RED"  value="#{iprs.iprs.location}"/>
                                                                     <p:outputLabel value="Place of Issue"/>
                                                                     <p:outputLabel value="  :  "/>
                                                                     <p:outputLabel style="color:RED"  value="#{iprs.iprs.placeOfIssue}"/>
-                                                                    <p:outputLabel value="Sub-Location"/>
-                                                                    <p:outputLabel value="  :  "/> 
-                                                                    <p:outputLabel style="color:RED"  value="#{iprs.iprs.sublocation}"/>
-                                                                    <p:outputLabel value="Location"/>
-                                                                    <p:outputLabel value="  :  "/>
-                                                                    <p:outputLabel style="color:RED"  value="#{iprs.iprs.location}" />
                                                                     <p:outputLabel value="status"/>
                                                                     <p:outputLabel value="  :  "/>
                                                                     <p:outputLabel  style="color:RED" value="#{iprs.iprs.status}"/>
