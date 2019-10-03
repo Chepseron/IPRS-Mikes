@@ -6,10 +6,17 @@ import db.Emp;
 import db.Iprs;
 import db.Quotes;
 import db.Roles;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.net.URL;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
@@ -30,11 +37,18 @@ import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleModel;
 import org.primefaces.model.chart.MeterGaugeChartModel;
 import org.tempuri.ServerInterface;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 @ManagedBean(name = "iprs")
 @SessionScoped
-
-public class iprs {
+public class iprs implements Serializable {
 
     @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/10.1.1.5_9004/IPRSServerwcf.wsdl")
     private ServerInterface service;
@@ -43,8 +57,11 @@ public class iprs {
     @Resource
     private UserTransaction utx;
     private String IDNumber;
+    private String passport;
+    private String alien;
     private String SerialNumber;
     private String username;
+    private String otp;
     private String password;
     private String newPassword;
     private String confirmPword;
@@ -61,6 +78,8 @@ public class iprs {
     private Groups groups = new Groups();
     private List<Groups> GroupsList = new ArrayList();
     private Roles role = new Roles();
+    private String citizenShip = new String();
+    private String error = new String();
     private List<Roles> rolesList = new ArrayList();
     private List<Admins> adminsListBlank = new ArrayList();
     private List<Groups> groupsListBlank = new ArrayList();
@@ -199,15 +218,13 @@ public class iprs {
     }
 
     public String encryptingPass(String args) {
-        Base64.Encoder encoder = Base64.getEncoder();
-        String str = encoder.encodeToString(args.getBytes());
+        String str = new String(Base64.encodeBase64(args.getBytes()));
         return str;
     }
 
     public String decryptingPass(String args) {
-        Base64.Decoder decoder = Base64.getDecoder();
-        String dStr = new String(decoder.decode(args));
-        return dStr;
+        String str = new String(Base64.decodeBase64(args.getBytes()));
+        return str;
     }
 
     public String createRole() {
@@ -485,8 +502,196 @@ public class iprs {
                 context.addMessage("loginInfoMessages", message);
                 return "homePage.xhtml";
             }
-            setAdmins((Admins) getEm().createQuery("select a from Admins a where a.username='" + getUsername() + "' and a.password = '" + decryptingPass(getPassword()) + "'").getSingleResult());
+            setAdmins((Admins) getEm().createQuery("select a from Admins a where a.username='" + getUsername() + "' and a.password = '" + encryptingPass(getPassword()) + "'").getSingleResult());
             GroupsList = em.createQuery("select g from Groups g where g.groupName = '" + admins.getGroupID().getGroupName() + "'").getResultList();
+
+            if (getAdmins().getStatus() == 1) {
+                return "changePassword.xhtml?faces-redirect=true";
+            } else {
+
+                String Capital_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                String Small_chars = "abcdefghijklmnopqrstuvwxyz";
+                String numbers = "0123456789";
+                String symbols = "!@#$%^&*_=+-/.?<>)";
+                String values = Capital_chars + Small_chars
+                        + numbers + symbols;
+                Random rndm_method = new Random();
+                char[] password = new char[5];
+                for (int i = 0; i < 5; i++) {
+                    password[i] = values.charAt(rndm_method.nextInt(values.length()));
+                }
+
+                getUtx().begin();
+                getAudit().setAction("Retrieved OTP");
+                getAudit().setUsername(getUsername());
+                getAudit().setDateperformed(new Date());
+                admins.setOtp(password.toString());
+                em.merge(admins);
+                getEm().persist(getAudit());
+                getUtx().commit();
+
+                send(admins);
+                return "otp.xhtml?faces-redirect=true";
+            }
+        } catch (Exception e) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", e.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getToken() {
+        String token = new String();
+        try {
+
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+
+            }};
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HostnameVerifier allHostsValid = new HostnameVerifier() {
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            };
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+            URL url = new URL("https://sms.metlec.co.ke");
+
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            con.addRequestProperty("grant_type", "token_request");
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+
+            String tokenRequest = "{\n"
+                    + "\"username\": \"taajmoney\",\n"
+                    + "\"password\": \"taajmoney2020\"\n"
+                    + "}";
+
+            StringBuilder response = new StringBuilder();
+            try (OutputStream os = con.getOutputStream()) {
+                byte[] input = tokenRequest.getBytes("utf-8");
+                os.write(input, 0, input.length);
+                try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(con.getInputStream(), "utf-8"))) {
+                    response = new StringBuilder();
+                    String responseLine = null;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                    }
+                    System.out.println(response.toString());
+                }
+            }
+            Object obj = new JSONParser().parse(response.toString());
+            JSONObject jo = (JSONObject) obj;
+            token = (String) jo.get("Token");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return token;
+    }
+
+    public String send(Admins msg) {
+        String messageFromResponse = new String();
+        StringBuilder response = new StringBuilder();
+        try {
+
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+
+            }};
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HostnameVerifier allHostsValid = new HostnameVerifier() {
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            };
+
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+            URL url = new URL("https://sms.metlec.co.ke");
+
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            con.setRequestProperty("Authorization", "Bearer " + getToken());
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+
+            String tokenRequest = "{\n"
+                    + "\"msisdn\": \"" + msg.getPhone() + "\",\n"
+                    + "\"message\": \"" + msg.getOtp() + "\",\n"
+                    + "\"sender_id\": \"" + new java.util.Date() + "\"\n"
+                    + "}";
+            try (OutputStream os = con.getOutputStream()) {
+                byte[] input = tokenRequest.getBytes("utf-8");
+                os.write(input, 0, input.length);
+                try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(con.getInputStream(), "utf-8"))) {
+
+                    String responseLine = null;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                    }
+                    System.out.println(response.toString());
+                }
+            }
+
+            Object obj = new JSONParser().parse(response.toString());
+            JSONObject jo = (JSONObject) obj;
+            messageFromResponse = (String) jo.get("message");
+
+            return messageFromResponse;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ex.getMessage();
+        }
+
+    }
+
+    public String logout() {
+        try {
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            HttpSession httpSession = (HttpSession) facesContext.getExternalContext().getSession(false);
+            httpSession.invalidate();
+            return "homePage.xhtml?faces-redirect=true";
+        } catch (Exception e) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "error", e.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String confirmOtp() {
+        try {
+            setAdmins((Admins) getEm().createQuery("select a from Admins a where a.otp'" + getOtp() + "'").getSingleResult());
+            GroupsList = em.createQuery("select g from Groups g where g.groupName = '" + admins.getGroupID().getGroupName() + "'").getResultList();
+
             if (getAdmins().getStatus() == 1) {
                 return "changePassword.xhtml?faces-redirect=true";
             } else {
@@ -507,37 +712,22 @@ public class iprs {
                         setAudittrails(true);
                     }
                 }
+
                 getUtx().begin();
                 getAudit().setAction("Logged into the system");
                 getAudit().setUsername(getUsername());
                 getAudit().setDateperformed(new Date());
                 getEm().persist(getAudit());
                 getUtx().commit();
-
                 return "iprs.xhtml?faces-redirect=true";
             }
-        } catch (Exception e) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please provide correct credentials");
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage("loginInfoMessages", message);
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public String logout() {
-        try {
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            HttpSession httpSession = (HttpSession) facesContext.getExternalContext().getSession(false);
-            httpSession.invalidate();
-            return "homePage.xhtml?faces-redirect=true";
         } catch (Exception e) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "error", e.getMessage());
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("loginInfoMessages", message);
             e.printStackTrace();
+            return "homePage.xhtml?faces-redirect=true";
         }
-        return null;
     }
 
     public String getUsername() {
@@ -668,17 +858,34 @@ public class iprs {
      * @param eventModel the eventModel to set
      */
     public void setEventModel(ScheduleModel eventModel) {
+
         this.eventModel = eventModel;
+    }
+
+    public String sendOTP(String phoneNumber) {
+        return "";
     }
 
     public String verifyByIDCard2() {
         try { // Call Web Service Operation
+            if (StringUtils.isEmpty(getUsername())) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage("loginInfoMessages", message);
+                return "homePage.xhtml";
+            }
             iprs.setPhoto("");
+
+            //"zhassan", "Nimo-2018*", 
+            ServerInterface services = new ServerInterface();
             System.out.println("id number = " + IDNumber);
-            org.tempuri.IServiceIPRS port = service.getBasicHttpBindingIServiceIPRS();
+
+            org.tempuri.IServiceIPRS port = services.getBasicHttpBindingIServiceIPRS();
+
+            System.out.println(port.login("zhassan", "Nimo-2018*"));
             org.datacontract.schemas._2004._07.iprsmanager.HumanInfoFromIDCard result = port.getDataByIdCard("zhassan", "Nimo-2018*", IDNumber, SerialNumber);
             iprs = new Iprs();
-            iprs.setIdnumber(Integer.parseInt(result.getIDNumber().getValue()));
+            iprs.setIdnumber(result.getIDNumber().getValue());
             iprs.setCreatedOn(new java.util.Date().toString());
             iprs.setFirstName(result.getFirstName().getValue());
             iprs.setSublocation(result.getPlaceOfBirth().getValue());
@@ -687,12 +894,14 @@ public class iprs {
             iprs.setSecondName(result.getOtherName().getValue());
             iprs.setLastName(result.getSurname().getValue());
             iprs.setGender(result.getGender().getValue());
-
             String imageString = new String(Base64.encodeBase64(result.getPhoto().getValue()));
-
             iprs.setPhoto(imageString);
-
-            System.out.println(result.getPhoto().getValue());
+            System.out.println(result.getErrorMessage().getValue());
+            error = new String();
+            error = result.getErrorMessage().getValue();
+            utx.begin();
+            em.persist(iprs);
+            utx.commit();
 
             return result.toString();
 
@@ -707,33 +916,39 @@ public class iprs {
 
     public String verifyByPassport() {
         try { // Call Web Service Operation
+
+            if (StringUtils.isEmpty(getUsername())) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage("loginInfoMessages", message);
+                return "homePage.xhtml";
+            }
             StringBuilder br = new StringBuilder();
-            org.tempuri.IServiceIPRS port = service.getBasicHttpBindingIServiceIPRS();
-            // TODO initialize WS operation arguments here
+            //"zhassan", "Nimo-2018*", 
+            ServerInterface services = new ServerInterface();
+            System.out.println("id number = " + passport);
 
-            org.datacontract.schemas._2004._07.iprsmanager.HumanInfoFromPassport result = port.getDataByPassport("zhassan", "Nimo-2018*", "24655940", "700982348");
-            System.out.println("Result = " + result);
+            org.tempuri.IServiceIPRS port = services.getBasicHttpBindingIServiceIPRS();
+            org.datacontract.schemas._2004._07.iprsmanager.HumanInfoFromPassport result = port.getDataByPassport("zhassan", "Nimo-2018*", passport, SerialNumber);
+            System.out.println("Result = " + result.getFirstName().getValue());
+            iprs = new Iprs();
+            iprs.setIdnumber(passport);
+            iprs.setCreatedOn(new java.util.Date().toString());
+            iprs.setFirstName(result.getFirstName().getValue());
+            iprs.setSublocation(result.getPlaceOfBirth().getValue());
+            iprs.setDob(result.getDateOfBirth().getValue());
+            iprs.setPlaceOfIssue(result.getPlaceOfLive().getValue());
+            iprs.setSecondName(result.getOtherName().getValue());
+            iprs.setLastName(result.getSurname().getValue());
+            iprs.setGender(result.getGender().getValue());
 
-            br.append(result.getCitizenship().getValue() + "\n"
-                    + result.getFirstName().getValue() + "\n"
-                    + result.getClan().getValue() + "\n"
-                    + result.getDateOfBirth().getValue() + "\n"
-                    + result.getEthnicGroup().getValue() + "\n"
-                    + result.getDateOfBirth().getValue() + "\n"
-                    + result.getDateOfIssue().getValue() + "\n"
-                    + result.getFamily().getValue() + "\n"
-                    + result.getGender().getValue() + "\n"
-                    + result.getIDNumber().getValue() + "\n"
-                    + result.getOccupation().getValue() + "\n"
-                    + result.getOtherName().getValue() + "\n"
-                    + result.getPhoto().getValue() + "\n"
-                    + result.getPin().getValue() + "\n"
-                    + result.getSurname().getValue() + "\n"
-                    + result.getErrorMessage().getValue() + "\n");
+            String imageString = new String(Base64.encodeBase64(result.getPhoto().getValue()));
+            iprs.setPhoto(imageString);
+            System.out.println(result.getErrorMessage().getValue());
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!SUCCESS!", br.toString());
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage("msgs", message);
+            utx.begin();
+            em.persist(iprs);
+            utx.commit();
 
             return result.toString();
 
@@ -741,7 +956,58 @@ public class iprs {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("msgs", message);
+            ex.printStackTrace();
+            return ex.getMessage();
+        }
+    }
 
+    public String verifyByAlien() {
+        try { // Call Web Service Operation
+
+            if (StringUtils.isEmpty(getUsername())) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage("loginInfoMessages", message);
+                return "homePage.xhtml";
+            }
+            StringBuilder br = new StringBuilder();
+            //"zhassan", "Nimo-2018*", 
+            ServerInterface services = new ServerInterface();
+            System.out.println("id number = " + alien);
+            citizenShip = new String();
+            setError(new String());
+            org.tempuri.IServiceIPRS port = services.getBasicHttpBindingIServiceIPRS();
+            org.datacontract.schemas._2004._07.iprsmanager.HumanInfoFromAlienCard result = port.getDataByAlienCard("zhassan", "Nimo-2018*", alien, SerialNumber);
+            System.out.println("Result = " + result.getCitizenship().getValue());
+            iprs = new Iprs();
+            iprs.setIdnumber(alien);
+            iprs.setCreatedOn(new java.util.Date().toString());
+            iprs.setFirstName(result.getFirstName().getValue());
+            iprs.setSublocation(result.getPlaceOfBirth().getValue());
+            iprs.setDob(result.getDateOfBirth().getValue());
+            iprs.setPlaceOfIssue(result.getPlaceOfLive().getValue());
+            iprs.setSecondName(result.getOtherName().getValue());
+            iprs.setLastName(result.getSurname().getValue());
+            iprs.setGender(result.getGender().getValue());
+            setCitizenShip(result.getCitizenship().getValue());
+
+            String imageString = new String(Base64.encodeBase64(result.getPhoto().getValue()));
+            setError(result.getErrorMessage().getValue());
+            iprs.setPhoto(imageString);
+
+            System.out.println(result.getErrorMessage().getValue());
+
+            utx.begin();
+            em.persist(iprs);
+            utx.commit();
+
+            return result.toString();
+
+        } catch (Exception ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("msgs", message);
+            ex.printStackTrace();
             return ex.getMessage();
         }
     }
@@ -1067,6 +1333,76 @@ public class iprs {
      */
     public void setUserCreateView(boolean userCreateView) {
         this.userCreateView = userCreateView;
+    }
+
+    /**
+     * @return the citizenShip
+     */
+    public String getCitizenShip() {
+        return citizenShip;
+    }
+
+    /**
+     * @param citizenShip the citizenShip to set
+     */
+    public void setCitizenShip(String citizenShip) {
+        this.citizenShip = citizenShip;
+    }
+
+    /**
+     * @return the error
+     */
+    public String getError() {
+        return error;
+    }
+
+    /**
+     * @param error the error to set
+     */
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    /**
+     * @return the passport
+     */
+    public String getPassport() {
+        return passport;
+    }
+
+    /**
+     * @param passport the passport to set
+     */
+    public void setPassport(String passport) {
+        this.passport = passport;
+    }
+
+    /**
+     * @return the alien
+     */
+    public String getAlien() {
+        return alien;
+    }
+
+    /**
+     * @param alien the alien to set
+     */
+    public void setAlien(String alien) {
+        this.alien = alien;
+    }
+
+    /**
+     * @return the otp
+     */
+    public String getOtp() {
+        return otp;
+    }
+
+    /**
+     * @param otp the otp to set
+     */
+    public void setOtp(String otp) {
+        this.otp = otp;
     }
 
     /**

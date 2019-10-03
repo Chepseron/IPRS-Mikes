@@ -43,7 +43,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Admins.findByEmailAdd", query = "SELECT a FROM Admins a WHERE a.emailAdd = :emailAdd")
     , @NamedQuery(name = "Admins.findByMiddlename", query = "SELECT a FROM Admins a WHERE a.middlename = :middlename")
     , @NamedQuery(name = "Admins.findByDateCreated", query = "SELECT a FROM Admins a WHERE a.dateCreated = :dateCreated")
-    , @NamedQuery(name = "Admins.findByStatus", query = "SELECT a FROM Admins a WHERE a.status = :status")})
+    , @NamedQuery(name = "Admins.findByStatus", query = "SELECT a FROM Admins a WHERE a.status = :status")
+    , @NamedQuery(name = "Admins.findByOtp", query = "SELECT a FROM Admins a WHERE a.otp = :otp")})
 public class Admins implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -83,6 +84,11 @@ public class Admins implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "otp")
+    private String otp;
     @JoinColumn(name = "groupID", referencedColumnName = "idgroups")
     @ManyToOne(optional = false)
     private Groups groupID;
@@ -94,10 +100,11 @@ public class Admins implements Serializable {
         this.adminId = adminId;
     }
 
-    public Admins(Integer adminId, Date dateCreated, int status) {
+    public Admins(Integer adminId, Date dateCreated, int status, String otp) {
         this.adminId = adminId;
         this.dateCreated = dateCreated;
         this.status = status;
+        this.otp = otp;
     }
 
     public Integer getAdminId() {
@@ -178,6 +185,14 @@ public class Admins implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
     }
 
     public Groups getGroupID() {

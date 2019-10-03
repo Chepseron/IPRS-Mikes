@@ -67,7 +67,7 @@
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                        <b>taajmoneytransfer, Nairobi CBD, teleposta towers</b>
+                        <b>Taajmoneytransfer, Nairobi CBD, Corner house,Kimathi street</b>
                         P.O. Box 47583 – 00100 Nairobi
                         Tel:020-2321972/ 0722701990
                         globalfrx@gmail.com
@@ -78,7 +78,7 @@
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                        <b>taajmoneytransfer, Nairobi CBD, teleposta towers</b>
+                        <b>Taajmoneytransfer, Nairobi CBD, Corner house,Kimathi street</b>
                         P.O. Box 47583 – 00100 Nairobi
                         Tel:020-2321972/ 0722701990
                         globalfrx@gmail.com
@@ -103,18 +103,19 @@
                                                 </h:panelGrid>
                                             </div>
                                             <div align="center">
-                                                <h:panelGrid columns="1">
-                                                    <div class="labels">ID/Passport</div>
+                                                <h:panelGrid columns="1"  id="panell">
+                                                    <div class="labels">National ID</div>
                                                     <div class="text_boxes"> <h:inputText id="username" value="#{iprs.IDNumber}"/></div>
                                                     <div class="labels">Serial Number</div>
                                                     <div class="text_boxes"><h:inputText value="#{iprs.serialNumber}"/></div>
-                                                    <div class="labels"><p:commandButton value="Query the IPRS Database" oncomplete="PF('iprsDialog').show();" update="iprsDetail" image="/images/preferences-system-login.png" action="#{iprs.verifyByIDCard2()}"/></div>
+                                                    <div class="labels"><p:commandButton value="SEARCH" oncomplete="PF('iprsDialogs').show();" update="iprsDetails" image="/images/preferences-system-login.png"  process="@this panell"  action="#{iprs.verifyByIDCard2}"/></div>
                                                 </h:panelGrid>
 
 
-                                                <p:dialog header="IPRS DETAILS" dynamic="true" widgetVar="iprsDialog"  showEffect="clip"  hideEffect="explode" resizable="false">
-                                                    <p:outputPanel id="iprsDetail" style="text-align:center;">
-                                                        <div  style="#{iprs.iprs.status == '1' ? 'background-image: url(/images/blinkingButton.gif)' : null}" />
+                                                <p:dialog header="IPRS DETAILS" dynamic="true" widgetVar="iprsDialogs"  showEffect="clip"  hideEffect="explode" resizable="false">
+                                                    <div class="logo"><img src="images/GTB-Logo.jpg"  width="50px" height="50px" alt=" "/></div>
+                                                    <p:outputPanel id="iprsDetails" style="text-align:center;">
+
                                                         <p:outputLabel value="#{iprs.iprs.firstName} #{iprs.iprs.secondName}  #{iprs.iprs.lastName} "  style="color:RED; font-size: xx-large"/>
                                                         <h:panelGrid columns="4">
                                                             <h:panelGrid columns="1">
@@ -172,8 +173,13 @@
                                                                     <p:outputLabel style="color:RED"  value="#{iprs.iprs.createdBy}"/>
                                                                 </h:panelGrid>
                                                             </h:panelGrid>
+
                                                         </h:panelGrid>
                                                     </p:outputPanel>
+
+                                                    <p:commandButton value="Print" type="button" icon="pi pi-print" style="display:block;margin-bottom: 20px">
+                                                        <p:printer target="iprsDetails" />
+                                                    </p:commandButton>
                                                 </p:dialog> 
                                             </div>
                                         </p:tab>
@@ -189,18 +195,18 @@
                                                     </h:panelGrid>
                                                 </div>
                                                 <div>
-                                                    <h:panelGrid columns="1">
+                                                    <h:panelGrid columns="1" id="panel2">
                                                         <div class="labels">Passport Number</div>
-                                                        <div class="text_boxes"> <h:inputText id="usernames" value="#{iprs.IDNumber}"/></div>
+                                                        <div class="text_boxes"> <h:inputText id="usernamesee" value="#{iprs.passport}"/></div>
                                                         <div class="labels">Serial Number</div>
-                                                        <div class="text_boxes"><h:inputText value="#{iprs.serialNumber}"/></div>
+                                                        <div class="text_boxes"><h:inputText value="#{iprs.iprs.serialNumber}"/></div>
+                                                        <div class="labels"><p:commandButton value="SEARCH" oncomplete="PF('iprsDialog').show();" update="iprsDetail" image="/images/preferences-system-login.png"  process="@this panel2"  action="#{iprs.verifyByPassport}"/></div>
                                                     </h:panelGrid>
-                                                    <h:panelGrid columns="4">
-                                                        <div class="labels"><h:commandButton value="Query the IPRS Database"  image="/images/preferences-system-login.png" action="#{iprs.verifyByIDCard2}"/></div>
-                                                    </h:panelGrid>
+
                                                     <p:dialog header="IPRS DETAILS" dynamic="true" widgetVar="iprsDialog"  showEffect="clip"  hideEffect="explode" resizable="false">
+                                                        <div class="logo"><img src="images/GTB-Logo.jpg"  width="50px" height="50px" alt=" "/></div>
                                                         <p:outputPanel id="iprsDetail" style="text-align:center;">
-                                                            <div  style="#{iprs.iprs.status == '1' ? 'background-image: url(/images/blinkingButton.gif)' : null}" />
+                                                            <p:outputLabel value="#{iprs.error}"  style="color:RED; font-size: xx-large"/>
                                                             <p:outputLabel value="#{iprs.iprs.firstName} #{iprs.iprs.secondName}  #{iprs.iprs.lastName} "  style="color:RED; font-size: xx-large"/>
                                                             <h:panelGrid columns="4">
                                                                 <h:panelGrid columns="1">
@@ -258,12 +264,119 @@
                                                                         <p:outputLabel style="color:RED"  value="#{iprs.iprs.createdBy}"/>
                                                                     </h:panelGrid>
                                                                 </h:panelGrid>
+
                                                             </h:panelGrid>
                                                         </p:outputPanel>
-                                                    </p:dialog>
+
+                                                        <p:commandButton value="Print" type="button" icon="pi pi-print" style="display:block;margin-bottom: 20px">
+                                                            <p:printer target="iprsDetails" />
+                                                        </p:commandButton>18
+                                                    </p:dialog> 
                                                 </div>
                                             </div> 
                                         </p:tab>
+                                        <p:tab title="SEARCH BY ALIEN ID">
+                                            <div align="center">
+                                                <div>
+                                                    <h:panelGrid columns="5">
+                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Cards that have been assiged to accounts" value="#{iprs.unassignedMeter}"/>
+                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Unstatus iprs" value="#{iprs.assignedMeter}"/>
+                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Logged On users" value="#{iprs.unassignedMeter}"/>
+                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFx00, FF0000" title="Logged On users" value="#{iprs.assignedMeter}"/>
+                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFx00, FF0000" title="Logged On users" value="#{iprs.assignedMeter}"/>
+                                                    </h:panelGrid>
+                                                </div>
+                                                <div>
+                                                    <h:panelGrid columns="1" id="alien">
+                                                        <div class="labels">Alien ID</div>
+                                                        <div class="text_boxes"> <h:inputText id="usernamese" value="#{iprs.alien}"/></div>
+                                                        <div class="labels">Serial Number</div>
+                                                        <div class="text_boxes"><h:inputText value="#{iprs.serialNumber}"/></div>
+                                                        <div class="labels"><p:commandButton value="SEARCH" oncomplete="PF('iprsDialogSS').show();" update="iprsDetailSS" image="/images/preferences-system-login.png"  process="@this alien"  action="#{iprs.verifyByAlien}"/></div>
+                                                    </h:panelGrid>
+
+                                                    <p:dialog header="IPRS DETAILS" dynamic="true" widgetVar="iprsDialogSS"  showEffect="clip"  hideEffect="explode" resizable="false">
+                                                        <div class="logo"><img src="images/GTB-Logo.jpg"  width="50px" height="50px" alt=" "/></div>
+                                                        <p:outputPanel id="iprsDetailSS" style="text-align:center;">
+                                                            <p:outputLabel value="#{iprs.error} "  style="color:RED; font-size: x-large"/>
+                                                            <p:outputLabel value="#{iprs.iprs.firstName} #{iprs.iprs.secondName}  #{iprs.iprs.lastName} "  style="color:RED; font-size: xx-large"/>
+                                                            <h:panelGrid columns="4">
+                                                                <h:panelGrid columns="1">
+                                                                    <h:graphicImage value="/images/light-green-flash.gif" rendered="#{iprs.iprs.status == '1'}" title="#{iprs.iprs.firstName} belongs to #{iprs.iprs.secondName} for #{iprs.iprs.lastName} "  width="20px" height="20px"/>
+                                                                    <h:graphicImage value="/images/FlashingYellow.gif" rendered="#{iprs.iprs.status == ' '}"  title="#{iprs.iprs.firstName} belongs to #{iprs.iprs.secondName} for #{iprs.iprs.lastName} " width="20px" height="20px"/>
+                                                                    <p:panel>
+                                                                        <h:panelGrid columns="1">
+                                                                            <img src="data:image/png;base64,#{iprs.iprs.photo}"/>     
+                                                                        </h:panelGrid>
+                                                                    </p:panel>
+                                                                </h:panelGrid>
+                                                                <h:panelGrid columns="1">
+                                                                    <h:panelGrid columns="3">
+                                                                        <p:outputLabel value="CitizenShip"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.citizenShip}" />
+                                                                        <p:outputLabel value="First Name"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.firstName}" />
+                                                                        <p:outputLabel value="Second Name"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel  style="color:RED" value="#{iprs.iprs.secondName}"/>
+                                                                        <p:outputLabel value="Last Name"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.lastName}"/>
+                                                                        <p:outputLabel value="ID Number"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.idnumber}"/>
+                                                                        <p:outputLabel value="Serial Number"/>
+                                                                        <p:outputLabel value="  :  "/> 
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.serialNumber}"/>
+                                                                        <p:outputLabel value="Date Of Issue"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.dateOfIssue}" />
+                                                                        <p:outputLabel value="DOB"/>
+                                                                        <p:outputLabel value="  :  "/> 
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.dob}"/>
+                                                                        <p:outputLabel value="Date of Death"/>
+                                                                        <p:outputLabel value="  :  "/> 
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.dateOfIssue}"/>
+                                                                        <p:outputLabel value="Sex"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.gender}" />
+                                                                        <p:outputLabel value="Holders Signature"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel  style="color:RED" value="#{iprs.iprs.holdersSign}"/>
+                                                                        <p:outputLabel value="Place of Issue"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.placeOfIssue}"/>
+                                                                        <p:outputLabel value="status"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel  style="color:RED" value="#{iprs.iprs.status}"/>
+                                                                        <p:outputLabel value="Quaried On"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.createdOn}"/>
+                                                                        <p:outputLabel value="Created By"/>
+                                                                        <p:outputLabel value="  :  "/>
+                                                                        <p:outputLabel style="color:RED"  value="#{iprs.iprs.createdBy}"/>
+                                                                    </h:panelGrid>
+                                                                </h:panelGrid>
+
+                                                            </h:panelGrid>
+                                                        </p:outputPanel>
+
+                                                        <p:commandButton value="Print" type="button" icon="pi pi-print" style="display:block;margin-bottom: 20px">
+                                                            <p:printer target="iprsDetails" />
+                                                        </p:commandButton>18
+                                                    </p:dialog> 
+                                                </div>
+                                            </div> 
+                                        </p:tab>
+
+
+
+
+
+
+
                                     </p:tabView>
                                 </h:form>
                             </h:panelGrid>

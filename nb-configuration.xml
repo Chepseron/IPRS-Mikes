@@ -17,5 +17,7 @@ Any value defined here will override the pom.xml file value but is only applicab
         <org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_deploy_2e_server>gfv3ee6</org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_deploy_2e_server>
         <org-netbeans-modules-projectapi.jsf_2e_language>Facelets</org-netbeans-modules-projectapi.jsf_2e_language>
         <org-netbeans-modules-projectapi.jsf_2e_present>true</org-netbeans-modules-projectapi.jsf_2e_present>
+        <org-netbeans-modules-maven-jaxws._5f_S_5f_IPRSServerWCF>http://10.1.1.5:9003/IPRSServerWCF?wsdl</org-netbeans-modules-maven-jaxws._5f_S_5f_IPRSServerWCF>
+        <org-netbeans-modules-maven-jaxws._5f_S_5f_IPRSServerwcf>http://10.1.1.5:9004/IPRSServerwcf?wsdl</org-netbeans-modules-maven-jaxws._5f_S_5f_IPRSServerwcf>
     </properties>
 </project-shared-configuration>

@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -26,26 +27,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "iprs")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Iprs.findAll", query = "SELECT i FROM Iprs i"),
-    @NamedQuery(name = "Iprs.findByIdiprs", query = "SELECT i FROM Iprs i WHERE i.idiprs = :idiprs"),
-    @NamedQuery(name = "Iprs.findByIdnumber", query = "SELECT i FROM Iprs i WHERE i.idnumber = :idnumber"),
-    @NamedQuery(name = "Iprs.findBySerialNumber", query = "SELECT i FROM Iprs i WHERE i.serialNumber = :serialNumber"),
-    @NamedQuery(name = "Iprs.findByFirstName", query = "SELECT i FROM Iprs i WHERE i.firstName = :firstName"),
-    @NamedQuery(name = "Iprs.findBySecondName", query = "SELECT i FROM Iprs i WHERE i.secondName = :secondName"),
-    @NamedQuery(name = "Iprs.findByLastName", query = "SELECT i FROM Iprs i WHERE i.lastName = :lastName"),
-    @NamedQuery(name = "Iprs.findByDob", query = "SELECT i FROM Iprs i WHERE i.dob = :dob"),
-    @NamedQuery(name = "Iprs.findByGender", query = "SELECT i FROM Iprs i WHERE i.gender = :gender"),
-    @NamedQuery(name = "Iprs.findByDistrictOfBirth", query = "SELECT i FROM Iprs i WHERE i.districtOfBirth = :districtOfBirth"),
-    @NamedQuery(name = "Iprs.findByPlaceOfIssue", query = "SELECT i FROM Iprs i WHERE i.placeOfIssue = :placeOfIssue"),
-    @NamedQuery(name = "Iprs.findByDateOfIssue", query = "SELECT i FROM Iprs i WHERE i.dateOfIssue = :dateOfIssue"),
-    @NamedQuery(name = "Iprs.findByHoldersSign", query = "SELECT i FROM Iprs i WHERE i.holdersSign = :holdersSign"),
-    @NamedQuery(name = "Iprs.findByDistrict", query = "SELECT i FROM Iprs i WHERE i.district = :district"),
-    @NamedQuery(name = "Iprs.findByDivision", query = "SELECT i FROM Iprs i WHERE i.division = :division"),
-    @NamedQuery(name = "Iprs.findByLocation", query = "SELECT i FROM Iprs i WHERE i.location = :location"),
-    @NamedQuery(name = "Iprs.findBySublocation", query = "SELECT i FROM Iprs i WHERE i.sublocation = :sublocation"),
-    @NamedQuery(name = "Iprs.findByCreatedBy", query = "SELECT i FROM Iprs i WHERE i.createdBy = :createdBy"),
-    @NamedQuery(name = "Iprs.findByCreatedOn", query = "SELECT i FROM Iprs i WHERE i.createdOn = :createdOn"),
-    @NamedQuery(name = "Iprs.findByStatus", query = "SELECT i FROM Iprs i WHERE i.status = :status")})
+    @NamedQuery(name = "Iprs.findAll", query = "SELECT i FROM Iprs i")
+    , @NamedQuery(name = "Iprs.findByIdiprs", query = "SELECT i FROM Iprs i WHERE i.idiprs = :idiprs")
+    , @NamedQuery(name = "Iprs.findByIdnumber", query = "SELECT i FROM Iprs i WHERE i.idnumber = :idnumber")
+    , @NamedQuery(name = "Iprs.findBySerialNumber", query = "SELECT i FROM Iprs i WHERE i.serialNumber = :serialNumber")
+    , @NamedQuery(name = "Iprs.findByFirstName", query = "SELECT i FROM Iprs i WHERE i.firstName = :firstName")
+    , @NamedQuery(name = "Iprs.findBySecondName", query = "SELECT i FROM Iprs i WHERE i.secondName = :secondName")
+    , @NamedQuery(name = "Iprs.findByLastName", query = "SELECT i FROM Iprs i WHERE i.lastName = :lastName")
+    , @NamedQuery(name = "Iprs.findByDob", query = "SELECT i FROM Iprs i WHERE i.dob = :dob")
+    , @NamedQuery(name = "Iprs.findByGender", query = "SELECT i FROM Iprs i WHERE i.gender = :gender")
+    , @NamedQuery(name = "Iprs.findByDistrictOfBirth", query = "SELECT i FROM Iprs i WHERE i.districtOfBirth = :districtOfBirth")
+    , @NamedQuery(name = "Iprs.findByPlaceOfIssue", query = "SELECT i FROM Iprs i WHERE i.placeOfIssue = :placeOfIssue")
+    , @NamedQuery(name = "Iprs.findByDateOfIssue", query = "SELECT i FROM Iprs i WHERE i.dateOfIssue = :dateOfIssue")
+    , @NamedQuery(name = "Iprs.findByHoldersSign", query = "SELECT i FROM Iprs i WHERE i.holdersSign = :holdersSign")
+    , @NamedQuery(name = "Iprs.findByDistrict", query = "SELECT i FROM Iprs i WHERE i.district = :district")
+    , @NamedQuery(name = "Iprs.findByDivision", query = "SELECT i FROM Iprs i WHERE i.division = :division")
+    , @NamedQuery(name = "Iprs.findByLocation", query = "SELECT i FROM Iprs i WHERE i.location = :location")
+    , @NamedQuery(name = "Iprs.findBySublocation", query = "SELECT i FROM Iprs i WHERE i.sublocation = :sublocation")
+    , @NamedQuery(name = "Iprs.findByCreatedBy", query = "SELECT i FROM Iprs i WHERE i.createdBy = :createdBy")
+    , @NamedQuery(name = "Iprs.findByCreatedOn", query = "SELECT i FROM Iprs i WHERE i.createdOn = :createdOn")
+    , @NamedQuery(name = "Iprs.findByStatus", query = "SELECT i FROM Iprs i WHERE i.status = :status")
+    , @NamedQuery(name = "Iprs.findByPhoto", query = "SELECT i FROM Iprs i WHERE i.photo = :photo")})
 public class Iprs implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,11 +56,9 @@ public class Iprs implements Serializable {
     @Basic(optional = false)
     @Column(name = "idiprs")
     private Integer idiprs;
-    @Column(name = "idnumber")
-    private Integer idnumber;
     @Size(max = 45)
-    @Column(name = "photo")
-    private String photo;
+    @Column(name = "idnumber")
+    private String idnumber;
     @Size(max = 45)
     @Column(name = "serialNumber")
     private String serialNumber;
@@ -109,12 +109,22 @@ public class Iprs implements Serializable {
     @Size(max = 45)
     @Column(name = "status")
     private String status;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 200)
+    @Column(name = "photo")
+    private String photo;
 
     public Iprs() {
     }
 
     public Iprs(Integer idiprs) {
         this.idiprs = idiprs;
+    }
+
+    public Iprs(Integer idiprs, String photo) {
+        this.idiprs = idiprs;
+        this.photo = photo;
     }
 
     public Integer getIdiprs() {
@@ -125,11 +135,11 @@ public class Iprs implements Serializable {
         this.idiprs = idiprs;
     }
 
-    public Integer getIdnumber() {
+    public String getIdnumber() {
         return idnumber;
     }
 
-    public void setIdnumber(Integer idnumber) {
+    public void setIdnumber(String idnumber) {
         this.idnumber = idnumber;
     }
 
@@ -269,6 +279,14 @@ public class Iprs implements Serializable {
         this.status = status;
     }
 
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -293,19 +311,5 @@ public class Iprs implements Serializable {
     public String toString() {
         return "db.Iprs[ idiprs=" + idiprs + " ]";
     }
-
-    /**
-     * @return the photo
-     */
-    public String getPhoto() {
-        return photo;
-    }
-
-    /**
-     * @param photo the photo to set
-     */
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
+    
 }

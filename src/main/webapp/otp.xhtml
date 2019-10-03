@@ -34,9 +34,7 @@
                 <title>.::IPRS::.</title>
             </f:facet>
         </h:head>
-
         <h:body>
-
             <p:layout fullPage="true">
                 <p:layoutUnit position="north" size="60" resizable="true" closable="true" collapsible="true">
                     <div id="navi_bar">
@@ -65,33 +63,10 @@
                     </ul>
                 </p:layoutUnit>
                 <p:layoutUnit position="east" size="150" style="border: 0 ; overflow: hidden; font-size: x-small; height: auto" collapsible="true">
-                    <p:panel>
-                        <h:form id="loginInfoMessages">
-                            <p:growl id="msgs" sticky="true" showDetail="true" />
-                            <h:panelGrid columns="1">
 
-                                <div class="labels">Username</div>
-                                <div class="text_boxes"> <p:inputText id="username" value="#{iprs.username}"/></div>
-                                <div class="labels">Password</div>
-                                <div class="text_boxes"><p:inputText type="password" value="#{iprs.password}"/></div>
-
-
-
-                            </h:panelGrid>
-                            <h:panelGrid columns="4">
-                                <div class="labels"><h:commandButton value="sign in"  image="/images/preferences-system-login.png" action="#{iprs.login}"/></div>
-                                <div class="labels"><h:outputText value="sign in"/></div>
-
-                                <div class="labels"><h:commandButton value="change password" image="/images/changePword.png" action="changePassword.xhtml" /></div>
-                                <div class="labels"><h:outputText value="change password"/></div>
-
-                            </h:panelGrid>
-
-                        </h:form>
-                    </p:panel>
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                         <b>Taajmoneytransfer, Nairobi CBD, Corner house,Kimathi street</b>
+                        <b>Taajmoneytransfer, Nairobi CBD, Corner house,Kimathi street</b>
                         P.O. Box 47583 – 00100 Nairobi
                         Tel:020-2321972/ 0722701990
                         globalfrx@gmail.com
@@ -99,32 +74,22 @@
                 </p:layoutUnit>
 
                 <p:layoutUnit position="center"  style="border: 0; width: 100%; overflow: hidden; font-size: x-small">
-                    <div id="display_content2" style=" background : url(images/bg-green.png);">
-                        <div id="header"><div class="wrap">
-                                <div id="slide-holder">
-                                    <div id="slide-runner">
-                                        <a href=""><img id="slide-img-1" src="images/taajmoney1.jpg" width="100%" height="100%" class="slide" alt="" /></a>
-                                        <a href=""><img id="slide-img-2" src="images/taajmoney2.jpg" width="100%" height="100%" class="slide" alt="" /></a>
-                                        <a href=""><img id="slide-img-3" src="images/taajmoney3.jpg" width="100%" height="100%" class="slide" alt="" /></a>
-                                        <div id="slide-controls">
-                                            <p id="slide-client" class="text"><span></span></p>
-                                            <p id="slide-desc" class="text"></p>
-                                            <p id="slide-nav"></p>
-                                        </div>
-                                    </div>
-                                    <!--content featured gallery here -->
-                                </div>
-                                <script type="text/javascript">
-                                    if (!window.slider)
-                                        var slider = {};
-                                    slider.data = [{"id": "slide-img-1", "client": " ", "desc": "Taaj Money IPRS Integration"}, {"id": "slide-img-2", "client": " ", "desc": "Taaj Money IPRS Integration"}, {"id": "slide-img-3", "client": " ", "desc": "Taaj Money IPRS Integration"}];
-                                </script>
-                            </div></div><!--/header-->
-                    </div>
+                    <p:panel>
+                        <h:form id="changePwd">
+                            <h:panelGrid columns="1" >
+                                <h:panelGrid columns="1">
+                                    <p:outputLabel value="Enter the One Time password sent to your Mobile Number "/>
+                                    <p:inputText  style="width:200px"  value="#{iprs.otp}" />
+                                    <p:messages for="userForm"  showDetail="true" />
+                                </h:panelGrid>
+                                <h:panelGrid columns="8">
+                                    <h:commandButton value="SUBMIT"   action="#{iprs.confirmOtp}" image="/images/document-save-2.png" style="height:22px"/>
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
                 </p:layoutUnit>
-
             </p:layout>
-
         </h:body>
 
     </f:view>

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://10.1.1.5:9003/IPRSServerWCF?wsdl" uri="wsdl/10.1.1.5_9003/IPRSServerWCF.wsdl"/>
+    <system systemId="http://10.1.1.5:9003/IPRSServerwcf?wsdl" uri="wsdl/10.1.1.5_9003/IPRSServerwcf.wsdl"/>
+    <system systemId="http://10.1.1.5:9003/IPRSServerWCF?xsd=xsd0" uri="wsdl/10.1.1.5_9003/IPRSServerWCF.xsd_xsd0.xsd"/>
+    <system systemId="http://10.1.1.5:9003/IPRSServerWCF?xsd=xsd1" uri="wsdl/10.1.1.5_9003/IPRSServerWCF.xsd_xsd1.xsd"/>
+    <system systemId="http://10.1.1.5:9003/IPRSServerWCF?xsd=xsd2" uri="wsdl/10.1.1.5_9003/IPRSServerWCF.xsd_xsd2.xsd"/>
+    <system systemId="http://10.1.1.5:9003/IPRSServerWCF?xsd=xsd3" uri="wsdl/10.1.1.5_9003/IPRSServerWCF.xsd_xsd3.xsd"/>
     <system systemId="http://10.1.1.5:9004/IPRSServerwcf?wsdl" uri="wsdl/10.1.1.5_9004/IPRSServerwcf.wsdl"/>
     <system systemId="http://10.1.1.5:9004/IPRSServerWCF?xsd=xsd0" uri="wsdl/10.1.1.5_9004/IPRSServerWCF.xsd_xsd0.xsd"/>
     <system systemId="http://10.1.1.5:9004/IPRSServerWCF?xsd=xsd1" uri="wsdl/10.1.1.5_9004/IPRSServerWCF.xsd_xsd1.xsd"/>
