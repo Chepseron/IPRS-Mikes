@@ -131,8 +131,8 @@ public class iprs implements Serializable {
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage("loginInfoMessages", message);
             } else {
-                admins = (Admins) em.createQuery("select a from Admins a where a.username = '" + username + "' and  a.password = '" + password + "'").getSingleResult();
-                admins.setPassword(getNewPassword());
+                admins = (Admins) em.createQuery("select a from Admins a where a.username = '" + username + "' and  a.password = '" + encryptingPass(password) + "'").getSingleResult();
+                admins.setPassword(encryptingPass(getNewPassword()));
                 getUtx().begin();
                 getAdmins().setDateCreated(new java.util.Date());
                 getAudit().setAction("changed password");
@@ -324,7 +324,6 @@ public class iprs implements Serializable {
     }
 
     public String EditContacts() {
-
         System.out.println("imefika hapa");
         try {
             if (StringUtils.isEmpty(getUsername())) {
@@ -357,11 +356,76 @@ public class iprs implements Serializable {
         return null;
     }
 
+    public String createGroup() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage("loginInfoMessages", message);
+                return "homePage.xhtml";
+            }
+            for (int i = 0; i < getSelectedResponsibilities().length; i++) {
+                getUtx().begin();
+                getGroups().setDescription(getGroups().getDescription());
+                getGroups().setGroupName(getGroups().getGroupName());
+                getGroups().setResponsibilities(getSelectedResponsibilities()[i]);
+                getAudit().setAction("created a group");
+                getAudit().setUsername(getUsername());
+                getAudit().setDateperformed(new Date());
+                getEm().persist(getAudit());
+                getEm().persist(getGroups());
+                getUtx().commit();
+            }
+        } catch (Exception ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+            ex.printStackTrace();
+        }
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!SUCCESS!", "Successfully created a group");
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage("loginInfoMessages", message);
+        return null;
+    }
+
+    public String EditGroups() {
+
+        System.out.println("imefika hapa");
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage("loginInfoMessages", message);
+                return "homePage.xhtml";
+            }
+            groups = getEm().find(Groups.class, groups.getIdgroups());
+
+            getUtx().begin();
+            getAudit().setAction("Updated a contact " + contacts.getContact());
+            getAudit().setUsername(getUsername());
+            getAudit().setDateperformed(new Date());
+            getEm().persist(getAudit());
+            getEm().merge(getContacts());
+            getUtx().commit();
+
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully edited " + getContacts().getContact());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+        } catch (Exception ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public String deleteRole() {
         try {
             if (StringUtils.isEmpty(getUsername())) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
                 FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage("loginInfoMessages", message);
                 return "homePage.xhtml";
             }
             role = getEm().find(Roles.class, role.getIdroles());
@@ -410,21 +474,6 @@ public class iprs implements Serializable {
             context.addMessage("loginInfoMessages", message);
             ex.printStackTrace();
         }
-        return null;
-    }
-
-    public String Query() {
-        try {
-
-        } catch (Exception ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage("loginInfoMessages", message);
-            ex.printStackTrace();
-        }
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!SUCCESS!", "Successfully created a group");
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage("loginInfoMessages", message);
         return null;
     }
 
@@ -755,7 +804,7 @@ public class iprs implements Serializable {
             message.setFrom(new InternetAddress("taajiprs@gmail.com"));
             message.setRecipients(
                     Message.RecipientType.TO,
-                    InternetAddress.parse("chepseron@gmail.com")
+                    InternetAddress.parse(args.getEmailAdd())
             );
             message.setSubject("TAAJ IPRS ONE TIME PASSWORD");
             message.setText("Dear " + args.getFirstName() + " " + args.getLastName()
