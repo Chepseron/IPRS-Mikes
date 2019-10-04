@@ -67,10 +67,7 @@
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                        <b>Taajmoneytransfer, Nairobi CBD, Corner house,Kimathi street</b>
-                        P.O. Box 47583 – 00100 Nairobi
-                        Tel:020-2321972/ 0722701990
-                        globalfrx@gmail.com
+                       #{iprs.contactss}
                     </fieldset>
                 </p:layoutUnit>
 
@@ -78,10 +75,7 @@
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                         <b>Taajmoneytransfer, Nairobi CBD, Corner house,Kimathi street</b>
-                        P.O. Box 47583 – 00100 Nairobi
-                        Tel:020-2321972/ 0722701990
-                        globalfrx@gmail.com
+                       #{iprs.contactss}
                     </fieldset> 
                 </p:layoutUnit>
                 <p:layoutUnit position="center"  style="border: 0; overflow: hidden; font-size: x-small">
@@ -144,12 +138,7 @@
                                         <p:tab title="QUERIED TRANSACTIONS">
                                             <div>
                                                 <div>
-                                                    <h:panelGrid columns="4">
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Cards that have been assiged to accounts" value="#{iprs.unassignedMeter}"/>
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Unstatus iprs" value="#{iprs.unassignedMeter}"/>
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFF00, FF0000" title="Logged On users" value="#{iprs.unassignedMeter}"/>
-                                                        <p:meterGaugeChart  style="width:200px;height:150px;" intervalOuterRadius="30"  transient="true" showTickLabels="true" seriesColors="00FF00, FFFx00, FF0000" title="Logged On users" value="#{iprs.unassignedMeter}"/>
-                                                    </h:panelGrid>
+                                                 <ui:include src="meters.xhtml" />
                                                 </div>
                                                 <div>
                                                     <p:dataTable var="iprss" value="#{iprs.iprsList}" widgetVar="iprsTable"

@@ -84,9 +84,7 @@ public class Admins implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    @Size(max = 45)
     @Column(name = "otp")
     private String otp;
     @JoinColumn(name = "groupID", referencedColumnName = "idgroups")
@@ -100,11 +98,10 @@ public class Admins implements Serializable {
         this.adminId = adminId;
     }
 
-    public Admins(Integer adminId, Date dateCreated, int status, String otp) {
+    public Admins(Integer adminId, Date dateCreated, int status) {
         this.adminId = adminId;
         this.dateCreated = dateCreated;
         this.status = status;
-        this.otp = otp;
     }
 
     public Integer getAdminId() {

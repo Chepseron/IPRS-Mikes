@@ -67,10 +67,7 @@
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                        <b>Taajmoneytransfer, Nairobi CBD, Corner house,Kimathi street</b>
-                        P.O. Box 47583 – 00100 Nairobi
-                        Tel:020-2321972/ 0722701990
-                        globalfrx@gmail.com
+                                #{iprs.contactss}
                     </fieldset>
                 </p:layoutUnit>
 
@@ -78,10 +75,7 @@
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                        <b>Taajmoneytransfer, Nairobi CBD, Corner house,Kimathi street</b>
-                        P.O. Box 47583 – 00100 Nairobi
-                        Tel:020-2321972/ 0722701990
-                        globalfrx@gmail.com
+                                #{iprs.contactss}
                     </fieldset> 
                 </p:layoutUnit>
                 <p:layoutUnit position="center"  style="border: 0; overflow: hidden; font-size: x-small">
@@ -102,21 +96,19 @@
                                             <h:panelGrid columns="1" >
                                                 <h:panelGrid columns="4">
                                                     <p:outputLabel value="First name"/>
-                                                    <p:inputText  style="width:200px"  value="#{iprs.admins.firstName}" />
+                                                    <p:inputText  style="width:200px"  value="#{iprs.adminss.firstName}" />
                                                     <p:outputLabel value="Middle name"/>
-                                                    <p:inputText  style="width:200px"  value="#{iprs.admins.middlename}" />
+                                                    <p:inputText  style="width:200px"  value="#{iprs.adminss.middlename}" />
                                                     <p:outputLabel value="Last name"/>
-                                                    <p:inputText   style="width:200px"   value="#{iprs.admins.lastName}" />
+                                                    <p:inputText   style="width:200px"   value="#{iprs.adminss.lastName}" />
                                                     <p:outputLabel value="Phone"/>
-                                                    <p:inputText  type="number"  style="width:200px"   value="#{iprs.admins.phone}" />
-                                                    <p:outputLabel value="Username"/>
-                                                    <p:inputText   style="width:200px"   value="#{iprs.admins.username}" />
+                                                    <p:inputText  type="number"  style="width:200px"   value="#{iprs.adminss.phone}" />
+
                                                     <p:outputLabel value="Email address"/>
-                                                    <p:inputText   style="width:200px"   value="#{iprs.admins.emailAdd}" />
-                                                    <p:outputLabel value="Password"/>
-                                                    <p:inputText  type="password"  style="width:200px"   value="#{iprs.admins.password}" />
+                                                    <p:inputText   style="width:200px"   value="#{iprs.adminss.emailAdd}" />
+
                                                     <p:outputLabel value="Group"/>
-                                                    <p:selectOneMenu filter="true" filterMatchMode="startsWith"      converter="#{convertor}"   value="#{iprs.admins.groupID}"  style="width: 200px" >
+                                                    <p:selectOneMenu filter="true" filterMatchMode="startsWith"      converter="#{convertor}"   value="#{iprs.adminss.groupID}"  style="width: 200px" >
                                                         <f:selectItems value="#{iprs.groupsList}"  var="group" itemValue="#{group}" itemLabel="#{group.groupName}" />
                                                     </p:selectOneMenu>
                                                     <p:messages for="userForm"  showDetail="true" />
@@ -182,7 +174,6 @@
                                                 <p:messages for="userForm"  showDetail="true" />
                                             </h:panelGrid>
                                             <h:panelGrid columns="8">
-
                                                 <h:commandButton value="SUBMIT"   action="#{iprs.editAdmin}" image="/images/document-save-2.png" style="height:22px"/>
                                                 <h:commandButton value="LOGOUT"   action="#{iprs.logout}" image="/images/system-logout.png" style="height:22px"/>
                                             </h:panelGrid>

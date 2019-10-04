@@ -63,27 +63,22 @@
                     </ul>
                 </p:layoutUnit>
                 <p:layoutUnit position="east" size="150" style="border: 0 ; overflow: hidden; font-size: x-small; height: auto" collapsible="true">
-
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                        <b>Taajmoneytransfer, Nairobi CBD, Corner house,Kimathi street</b>
-                        P.O. Box 47583 – 00100 Nairobi
-                        Tel:020-2321972/ 0722701990
-                        globalfrx@gmail.com
+                                #{iprs.contactss}
                     </fieldset>
                 </p:layoutUnit>
-
                 <p:layoutUnit position="center"  style="border: 0; width: 100%; overflow: hidden; font-size: x-small">
                     <p:panel>
                         <h:form id="changePwd">
-                            <h:panelGrid columns="1" >
+                            <h:panelGrid columns="1" style="align-content: center">
                                 <h:panelGrid columns="1">
-                                    <p:outputLabel value="Enter the One Time password sent to your Mobile Number "/>
-                                    <p:inputText  style="width:200px"  value="#{iprs.otp}" />
+                                    <p:outputLabel value="Enter the One Time password sent to your Mobile Number " style="align-self: center"/>
+                                    <p:inputText  style="width:200px; align-self: center"  value="#{iprs.otp}" />
                                     <p:messages for="userForm"  showDetail="true" />
                                 </h:panelGrid>
                                 <h:panelGrid columns="8">
-                                    <h:commandButton value="SUBMIT"   action="#{iprs.confirmOtp}" image="/images/document-save-2.png" style="height:22px"/>
+                                    <h:commandButton value="SUBMIT"   action="#{iprs.confirmOtp}" image="/images/document-save-2.png" style="height:22px; align-self: center"/>
                                 </h:panelGrid>
                             </h:panelGrid>
                         </h:form>

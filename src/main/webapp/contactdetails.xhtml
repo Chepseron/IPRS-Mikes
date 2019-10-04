@@ -67,14 +67,15 @@
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                                #{iprs.contactss}
+                       #{iprs.contactss}
                     </fieldset>
                 </p:layoutUnit>
+
                 <p:layoutUnit position="east" size="150" header="SETTINGS" style="border: 0 ; overflow: hidden; font-size: x-small" collapsible="true">
                     <ui:include src="menu.xhtml" /> 
                     <fieldset>
                         <legend><font color="green">contact us</font></legend>
-                                #{iprs.contactss}
+                       #{iprs.contactss}
                     </fieldset> 
                 </p:layoutUnit>
                 <p:layoutUnit position="center"  style="border: 0; overflow: hidden; font-size: x-small">
@@ -85,48 +86,38 @@
                                     <p:growl id="messages" showDetail="true" />
                                     <p:growl id="msgs" sticky="true" showDetail="true" />
                                     <p:tabView style="background: transparent; width: 100%; height: auto; border: 0" rendered="#{iprs.group}"> 
-                                        <p:tab title="MANAGE USER GROUPS" >
+                                        <p:tab title="MANAGE TAAJ CONTACTS" >
                                             <h:form id="groupForm">
                                                 <h:panelGrid columns="1" >
                                                     <h:panelGrid columns="2">
                                                         <p:outputLabel value="Group Name"/>
-                                                        <p:inputText  style="width:200px"  value="#{iprs.groups.groupName}" />
-                                                        <p:outputLabel value="Description"/>
-                                                        <p:inputText  style="width:200px"  value="#{iprs.groups.description}" />
-                                                        <p:outputLabel value="Responsibilities"/>
-                                                        <p:selectCheckboxMenu   value="#{iprs.selectedResponsibilities}" label="Responsibilities" 
-                                                                                filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
-                                                            <f:selectItem itemLabel="Create users" itemValue="users" />
-                                                            <f:selectItem itemLabel="Create groups" itemValue="groups" />
-                                                            <f:selectItem itemLabel="Query IPRS Database" itemValue="iprs" />
-                                                            <f:selectItem itemLabel="View Audit trails" itemValue="audittrails" />
-                                                            <f:selectItem itemLabel="View IPRS transactions" itemValue="transactions" />
-                                                        </p:selectCheckboxMenu>
+                                                        <p:inputText  style="width:200px"  value="#{iprs.contacts.contact}" />
+
                                                         <p:messages for="userForm"  showDetail="true" />
                                                     </h:panelGrid>
                                                     <h:panelGrid columns="8">
-                                                        <h:commandButton value="SUBMIT"   action="#{iprs.createRole}" image="/images/document-save-2.png" style="height:22px"/>
+                                                        <h:commandButton value="SUBMIT"   action="#{iprs.createContacts}" image="/images/document-save-2.png" style="height:22px"/>
                                                         <h:commandButton value="LOGOUT"   action="#{iprs.logout}" image="/images/system-logout.png" style="height:22px"/>
                                                     </h:panelGrid>
                                                 </h:panelGrid>
                                             </h:form>
                                         </p:tab>
-                                        <p:tab title="CREATED GROUPS" >
+                                        <p:tab title="CREATED TAAJ CONTACTS" >
                                             <div>
-                                                <p:dataTable var="groups" value="#{iprs.groupsList}" widgetVar="usersTable"
+                                                <p:dataTable var="groups" value="#{iprs.contactsList}" widgetVar="usersTable"
                                                              paginator="true" rows="10"
                                                              editable="true"
                                                              style="background: transparent; font-size: xx-small"
                                                              id="GROUPSTable"
-                                                             emptyMessage="No users found with given criteria" filteredValue="#{iprs.groupsListBlank}">
-                                                    <p:column filterBy="#{groups.groupName}" sortBy="#{groups.groupName}" headerText="Group Name">
-                                                        <p:outputLabel value="#{groups.groupName}" />
+                                                             emptyMessage="No users found with given criteria" filteredValue="#{iprs.contactsList}">
+                                                    <p:column filterBy="#{groups.contact}" sortBy="#{groups.contact}" headerText="Contct name">
+                                                        <p:outputLabel value="#{groups.contact}" />
                                                     </p:column>
-                                                    <p:column filterBy="#{groups.description}" sortBy="#{groups.description}" headerText="description">
-                                                        <p:outputLabel value="#{users.description}" />
+                                                    <p:column filterBy="#{groups.createdBy}" sortBy="#{groups.createdBy}" headerText="Created By">
+                                                        <p:outputLabel value="#{users.createdBy}" />
                                                     </p:column>
-                                                    <p:column filterBy="#{groups.responsibilities}" sortBy="#{groups.responsibilities}" headerText="phone">
-                                                        <p:outputLabel value="#{groups.responsibilities}" />
+                                                    <p:column filterBy="#{groups.createdOn}" sortBy="#{groups.createdOn}" headerText="Created On">
+                                                        <p:outputLabel value="#{groups.createdOn}" />
                                                     </p:column>
                                                 </p:dataTable>
                                             </div>

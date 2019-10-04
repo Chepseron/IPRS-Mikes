@@ -2,16 +2,11 @@ package bean;
 
 import db.Admins;
 import db.Audittrails;
-import db.Emp;
+import db.Contacts;
 import db.Iprs;
 import db.Quotes;
 import db.Roles;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.net.URL;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,14 +32,14 @@ import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleModel;
 import org.primefaces.model.chart.MeterGaugeChartModel;
 import org.tempuri.ServerInterface;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 @ManagedBean(name = "iprs")
 @SessionScoped
@@ -64,16 +59,18 @@ public class iprs implements Serializable {
     private String otp;
     private String password;
     private String newPassword;
+    private String contactss;
     private String confirmPword;
     private Audittrails audit = new Audittrails();
     private List<Audittrails> auditList = new ArrayList();
+    private Contacts contacts = new Contacts();
+    private List<Contacts> contactsList = new ArrayList();
     private String[] selectedResponsibilities = new String[30];
     private HtmlDataTable htmlDataTable = new HtmlDataTable();
-    private Emp emp = new Emp();
-    private List<Emp> EmpList = new ArrayList();
     private Iprs iprs = new Iprs();
     private List<Iprs> iprsList = new ArrayList();
     private Admins admins = new Admins();
+    private Admins adminss = new Admins();
     private List<Admins> adminsList = new ArrayList();
     private Groups groups = new Groups();
     private List<Groups> GroupsList = new ArrayList();
@@ -186,7 +183,10 @@ public class iprs implements Serializable {
     }
 
     public String createAdmin() {
-        System.out.println("imefika hapa");
+        System.out.println(adminss.getUsername());
+        System.out.println(adminss.getFirstName());
+        System.out.println(adminss.getEmailAdd());
+        System.out.println(adminss.getLastName());
         try {
             if (StringUtils.isEmpty(getUsername())) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
@@ -194,18 +194,22 @@ public class iprs implements Serializable {
                 context.addMessage("loginInfoMessages", message);
                 return "homePage.xhtml";
             }
-            getUtx().begin();
-            getAdmins().setDateCreated(new java.util.Date());
-            getAudit().setAction("created an admin");
-            getAdmins().setPassword(encryptingPass("123456"));
-            getAdmins().setStatus(1);
-            getAudit().setUsername(getUsername());
-            getAudit().setDateperformed(new Date());
-            getEm().persist(getAudit());
-            getEm().persist(getAdmins());
-            getUtx().commit();
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully created " + admins.getFirstName());
+            getUtx().begin();
+            adminss.setDateCreated(new java.util.Date());
+            adminss.setPassword(encryptingPass("123456"));
+            adminss.setStatus(1);
+            adminss.setUsername(adminss.getEmailAdd());
+
+            getAudit().setUsername(getAdminss().getEmailAdd());
+            getAudit().setDateperformed(new Date());
+            getAudit().setAction("created an admin");
+            getEm().persist(getAudit());
+            getEm().persist(adminss);
+            getUtx().commit();
+            sendcredentials(adminss);
+
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully created " + getAdminss().getFirstName());
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("loginInfoMessages", message);
         } catch (Exception ex) {
@@ -256,7 +260,6 @@ public class iprs implements Serializable {
     }
 
     public String editRole() {
-
         System.out.println("imefika hapa");
         try {
             if (StringUtils.isEmpty(getUsername())) {
@@ -279,6 +282,70 @@ public class iprs implements Serializable {
             getUtx().commit();
 
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully edited " + role.getRolename());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+        } catch (Exception ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public String CreateContacts() {
+        System.out.println("imefika hapa");
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage("loginInfoMessages", message);
+                return "homePage.xhtml";
+            }
+            getUtx().begin();
+            getAudit().setAction("created an admin");
+            getAudit().setUsername(getUsername());
+            getAudit().setDateperformed(new Date());
+            contacts.setCreatedBy(admins.getFirstName());
+            contacts.setCreatedOn(new java.util.Date());
+            getEm().persist(getAudit());
+            getEm().persist(getContacts());
+            getUtx().commit();
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully created " + getContacts().getContact());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+        } catch (Exception ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", ex.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("loginInfoMessages", message);
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public String EditContacts() {
+
+        System.out.println("imefika hapa");
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "!ERROR!", "Please login to the system");
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage("loginInfoMessages", message);
+                return "homePage.xhtml";
+            }
+            contacts = getEm().find(Contacts.class, contacts.getIdcontacts());
+            contacts.setCreatedBy(admins.getFirstName());
+            contacts.setCreatedOn(new java.util.Date());
+
+            getUtx().begin();
+            getAudit().setAction("Updated a contact " + contacts.getContact());
+            getAudit().setUsername(getUsername());
+            getAudit().setDateperformed(new Date());
+            getEm().persist(getAudit());
+            getEm().merge(getContacts());
+            getUtx().commit();
+
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "!success!", "You have successfully edited " + getContacts().getContact());
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("loginInfoMessages", message);
         } catch (Exception ex) {
@@ -389,7 +456,6 @@ public class iprs implements Serializable {
         for (int i = 0; i < 200; i++) {
             intervals.add(i + 20);
         }
-
         return new MeterGaugeChartModel(Integer.valueOf(130), intervals);
     }
 
@@ -512,9 +578,9 @@ public class iprs implements Serializable {
                 String Capital_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 String Small_chars = "abcdefghijklmnopqrstuvwxyz";
                 String numbers = "0123456789";
-                String symbols = "!@#$%^&*_=+-/.?<>)";
+                // String symbols = "!@#$%^&*_=+-/.?<>)";
                 String values = Capital_chars + Small_chars
-                        + numbers + symbols;
+                        + numbers;
                 Random rndm_method = new Random();
                 char[] password = new char[5];
                 for (int i = 0; i < 5; i++) {
@@ -542,134 +608,194 @@ public class iprs implements Serializable {
         return null;
     }
 
-    public String getToken() {
-        String token = new String();
-        try {
-
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-
-            }};
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HostnameVerifier allHostsValid = new HostnameVerifier() {
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            };
-            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-            URL url = new URL("https://sms.metlec.co.ke");
-
-            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-            con.addRequestProperty("grant_type", "token_request");
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json; utf-8");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true);
-
-            String tokenRequest = "{\n"
-                    + "\"username\": \"taajmoney\",\n"
-                    + "\"password\": \"taajmoney2020\"\n"
-                    + "}";
-
-            StringBuilder response = new StringBuilder();
-            try (OutputStream os = con.getOutputStream()) {
-                byte[] input = tokenRequest.getBytes("utf-8");
-                os.write(input, 0, input.length);
-                try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(con.getInputStream(), "utf-8"))) {
-                    response = new StringBuilder();
-                    String responseLine = null;
-                    while ((responseLine = br.readLine()) != null) {
-                        response.append(responseLine.trim());
-                    }
-                    System.out.println(response.toString());
-                }
+//    public String getToken() {
+//        String token = new String();
+//        try {
+//
+//            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+//                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+//                    return null;
+//                }
+//
+//                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+//                }
+//
+//                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+//                }
+//
+//            }};
+//            SSLContext sc = SSLContext.getInstance("SSL");
+//            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+//            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+//            HostnameVerifier allHostsValid = new HostnameVerifier() {
+//                public boolean verify(String hostname, SSLSession session) {
+//                    return true;
+//                }
+//            };
+//            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+//            URL url = new URL("https://sms.metlec.co.ke");
+//
+//            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+//            con.addRequestProperty("grant_type", "token_request");
+//            con.setRequestMethod("POST");
+//            con.setRequestProperty("Content-Type", "application/json; utf-8");
+//            con.setRequestProperty("Accept", "application/json");
+//            con.setDoOutput(true);
+//
+//            String tokenRequest = "{\n"
+//                    + "\"username\": \"taajmoney\",\n"
+//                    + "\"password\": \"taajmoney2020\"\n"
+//                    + "}";
+//
+//            StringBuilder response = new StringBuilder();
+//            try (OutputStream os = con.getOutputStream()) {
+//                byte[] input = tokenRequest.getBytes("utf-8");
+//                os.write(input, 0, input.length);
+//                try (BufferedReader br = new BufferedReader(
+//                        new InputStreamReader(con.getInputStream(), "utf-8"))) {
+//                    response = new StringBuilder();
+//                    String responseLine = null;
+//                    while ((responseLine = br.readLine()) != null) {
+//                        response.append(responseLine.trim());
+//                    }
+//                    System.out.println(response.toString());
+//                }
+//            }
+//            Object obj = new JSONParser().parse(response.toString());
+//            JSONObject jo = (JSONObject) obj;
+//            token = (String) jo.get("Token");
+//
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//        return token;
+//    }
+//    public String send(Admins msg) {
+//        String messageFromResponse = new String();
+//        StringBuilder response = new StringBuilder();
+//        try {
+//
+//            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+//                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+//                    return null;
+//                }
+//
+//                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+//                }
+//
+//                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+//                }
+//
+//            }};
+//            SSLContext sc = SSLContext.getInstance("SSL");
+//            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+//            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+//            HostnameVerifier allHostsValid = new HostnameVerifier() {
+//                public boolean verify(String hostname, SSLSession session) {
+//                    return true;
+//                }
+//            };
+//
+//            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+//            URL url = new URL("https://sms.metlec.co.ke");
+//
+//            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+//            con.setRequestProperty("Authorization", "Bearer " + getToken());
+//            con.setRequestMethod("POST");
+//            con.setRequestProperty("Content-Type", "application/json; utf-8");
+//            con.setRequestProperty("Accept", "application/json");
+//            con.setDoOutput(true);
+//
+//            String tokenRequest = "{\n"
+//                    + "\"msisdn\": \"" + msg.getPhone() + "\",\n"
+//                    + "\"message\": \"" + msg.getOtp() + "\",\n"
+//                    + "\"sender_id\": \"" + new java.util.Date() + "\"\n"
+//                    + "}";
+//            try (OutputStream os = con.getOutputStream()) {
+//                byte[] input = tokenRequest.getBytes("utf-8");
+//                os.write(input, 0, input.length);
+//                try (BufferedReader br = new BufferedReader(
+//                        new InputStreamReader(con.getInputStream(), "utf-8"))) {
+//
+//                    String responseLine = null;
+//                    while ((responseLine = br.readLine()) != null) {
+//                        response.append(responseLine.trim());
+//                    }
+//                    System.out.println(response.toString());
+//                }
+//            }
+//
+//            Object obj = new JSONParser().parse(response.toString());
+//            JSONObject jo = (JSONObject) obj;
+//            messageFromResponse = (String) jo.get("message");
+//
+//            return messageFromResponse;
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            return ex.getMessage();
+//        }
+//
+//    }
+    public void send(Admins args) {
+        final String username = "taajiprs@gmail.com";
+        final String password = "taaj1234";
+        Properties prop = new Properties();
+        prop.put("mail.smtp.host", "smtp.gmail.com");
+        prop.put("mail.smtp.port", "587");
+        prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.starttls.enable", "true"); //TLS
+        Session session = Session.getInstance(prop,
+                new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
             }
-            Object obj = new JSONParser().parse(response.toString());
-            JSONObject jo = (JSONObject) obj;
-            token = (String) jo.get("Token");
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        });
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("taajiprs@gmail.com"));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse("chepseron@gmail.com")
+            );
+            message.setSubject("TAAJ IPRS ONE TIME PASSWORD");
+            message.setText("Dear " + args.getFirstName() + " " + args.getLastName()
+                    + "\n\nPlease Login to http://197.157.228.150:8080/iprs using the One time password sent below \n" + args.getOtp() + "\n\nKind Regards\n"
+                    + "Taaj Money Transfer");
+            Transport.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
-        return token;
     }
 
-    public String send(Admins msg) {
-        String messageFromResponse = new String();
-        StringBuilder response = new StringBuilder();
-        try {
-
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-
-            }};
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HostnameVerifier allHostsValid = new HostnameVerifier() {
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            };
-
-            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-            URL url = new URL("https://sms.metlec.co.ke");
-
-            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-            con.setRequestProperty("Authorization", "Bearer " + getToken());
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json; utf-8");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true);
-
-            String tokenRequest = "{\n"
-                    + "\"msisdn\": \"" + msg.getPhone() + "\",\n"
-                    + "\"message\": \"" + msg.getOtp() + "\",\n"
-                    + "\"sender_id\": \"" + new java.util.Date() + "\"\n"
-                    + "}";
-            try (OutputStream os = con.getOutputStream()) {
-                byte[] input = tokenRequest.getBytes("utf-8");
-                os.write(input, 0, input.length);
-                try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(con.getInputStream(), "utf-8"))) {
-
-                    String responseLine = null;
-                    while ((responseLine = br.readLine()) != null) {
-                        response.append(responseLine.trim());
-                    }
-                    System.out.println(response.toString());
-                }
+    public void sendcredentials(Admins args) {
+        final String username = "taajiprs@gmail.com";
+        final String password = "taaj1234";
+        Properties prop = new Properties();
+        prop.put("mail.smtp.host", "smtp.gmail.com");
+        prop.put("mail.smtp.port", "587");
+        prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.starttls.enable", "true"); //TLS
+        Session session = Session.getInstance(prop,
+                new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
             }
-
-            Object obj = new JSONParser().parse(response.toString());
-            JSONObject jo = (JSONObject) obj;
-            messageFromResponse = (String) jo.get("message");
-
-            return messageFromResponse;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return ex.getMessage();
+        });
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("taajiprs@gmail.com"));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(args.getEmailAdd())
+            );
+            message.setSubject("WELCOME TO TAAJ IPRS SEARCH");
+            message.setText("Dear " + args.getFirstName() + " " + args.getLastName()
+                    + "\n\nPlease Login to http://197.157.228.150:8080/iprs using the password and username sent below \n password : 123456\n username  : " + args.getUsername() + "\n\nKind Regards\n"
+                    + "Taaj Money Transfer");
+            Transport.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
-
     }
 
     public String logout() {
@@ -689,7 +815,7 @@ public class iprs implements Serializable {
 
     public String confirmOtp() {
         try {
-            setAdmins((Admins) getEm().createQuery("select a from Admins a where a.otp'" + getOtp() + "'").getSingleResult());
+            setAdmins((Admins) getEm().createQuery("select a from Admins a where a.otp = '" + getOtp() + "'").getSingleResult());
             GroupsList = em.createQuery("select g from Groups g where g.groupName = '" + admins.getGroupID().getGroupName() + "'").getResultList();
 
             if (getAdmins().getStatus() == 1) {
@@ -786,23 +912,6 @@ public class iprs implements Serializable {
 
     public void setAuditList(List<Audittrails> auditList) {
         this.auditList = auditList;
-    }
-
-    public Emp getEmp() {
-        return emp;
-    }
-
-    public void setEmp(Emp emp) {
-        this.emp = emp;
-    }
-
-    public List<Emp> getEmpList() {
-        EmpList = getEm().createQuery("SELECT e FROM Emp e").getResultList();
-        return EmpList;
-    }
-
-    public void setEmpList(List<Emp> EmpList) {
-        this.EmpList = EmpList;
     }
 
     /**
@@ -1403,6 +1512,64 @@ public class iprs implements Serializable {
      */
     public void setOtp(String otp) {
         this.otp = otp;
+    }
+
+    /**
+     * @return the contacts
+     */
+    public Contacts getContacts() {
+        return contacts;
+    }
+
+    /**
+     * @param contacts the contacts to set
+     */
+    public void setContacts(Contacts contacts) {
+        this.contacts = contacts;
+    }
+
+    /**
+     * @return the contactsList
+     */
+    public List<Contacts> getContactsList() {
+        contactsList = em.createQuery("select c from Contacts c").getResultList();
+        return contactsList;
+    }
+
+    /**
+     * @param contactsList the contactsList to set
+     */
+    public void setContactsList(List<Contacts> contactsList) {
+        this.contactsList = contactsList;
+    }
+
+    /**
+     * @return the contactss
+     */
+    public String getContactss() {
+        contactss = (String) em.createQuery("select c.contact from Contacts c").getSingleResult();
+        return contactss;
+    }
+
+    /**
+     * @param contactss the contactss to set
+     */
+    public void setContactss(String contactss) {
+        this.contactss = contactss;
+    }
+
+    /**
+     * @return the adminss
+     */
+    public Admins getAdminss() {
+        return adminss;
+    }
+
+    /**
+     * @param adminss the adminss to set
+     */
+    public void setAdminss(Admins adminss) {
+        this.adminss = adminss;
     }
 
     /**
